@@ -12,11 +12,14 @@ module.exports = {
     ],
     themeConfig : {
       nav : [{
-          text: 'Vue',
-          link: '/vue/'
-          }, {
-          text: 'React',
-          link: '/react/'
+        text: 'Vue',
+        link: '/vue/'
+        }, {
+        text: 'React',
+        link: '/react/'
+        },{
+        text: 'Dva',
+        link: '/dva/'
         }, {
           text: 'Ps教程',
           link: '/ps/'
@@ -26,10 +29,9 @@ module.exports = {
         }
       ],
       sidebar: {
-          '/vue/' : [
-            '', {
+          '/vue/' : [{
               title: 'Vue',
-              // collapsable: false,
+              collapsable: false,
               children: [
                 'one',
                 'two'
@@ -53,7 +55,14 @@ module.exports = {
               'two'
             ]
           }
-        ]
+        ],
+        '/dva/': [{
+          title: 'DVA',
+          collapsable: false,
+          children: [
+            'one'
+          ]
+        }]
       }
     }
   }

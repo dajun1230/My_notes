@@ -1,4 +1,4 @@
-# 国科前端分享记录
+# 小杨_个人笔记汇总
 
 基于vuepress,详细文档参考[VuePress的官方文档](https://vuepress.vuejs.org/zh/guide/)）
 
@@ -11,7 +11,7 @@ git clone https://github.com/dajun1230/My_notes
 ```
 2、 安装对应的依赖
 ```sh
-cd gok-frontend
+cd My_notes
 npm install
 ```
 3、 启动项目
