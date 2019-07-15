@@ -42,8 +42,7 @@ module.exports = {
             title: 'React',
             collapsable: false,
             children: [
-              'one',
-              'two'
+              'one'
             ]
           }
         ],

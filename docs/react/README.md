@@ -2,16 +2,12 @@
 sidebarDepth: 3
 ---
 
-# Vue总述
+# React
 
-## 一些资料
-[React 官方文档](https://react.docschina.org/docs/getting-started.html)  
-[Vue 官方文档](https://cn.vuejs.org/v2/guide/)  
-[VuePress 官方文档](http://caibaojian.com/vuepress/guide/markdown.html)  
-[Airbnb JavaScript 代码规范（ES6）](https://www.w3cschool.cn/rtuhtw/)  
-[MarkDown 参考文档](https://coding.net/help/doc/project/markdown.html)  
-[mpvue 小程序Vue框架](http://mpvue.com/mpvue/quickstart/)  
-[iView 小程序UI框架](https://weapp.iviewui.com/docs/guide/start)  
+## 相关文档
+[React 官方文档](https://www.reactjscn.com/)   
+[Ant Design PC库](https://ant.design/index-cn)   
+[Ant Design Mobile 移动库](https://mobile.ant.design/index-cn)
 
 ## 我们需要做什么  
 
