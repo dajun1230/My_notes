@@ -51,37 +51,39 @@ To create a production build, use npm run build.
 |- .webpackrc
 ```
 ## 使用antd
-通过 npm 安装 antd 和 babel-plugin-import 。babel-plugin-import 是用来按需加载 antd 的脚本和样式的。
+通过 npm 安装 antd 和 babel-plugin-import 。babel-plugin-import 是用来按需加载 antd 的脚本和样式的。<br/>
+注：不需要安装less或者sass。
 ``` js
 $ npm install antd babel-plugin-import --save
 ```
 
 ## 使用antd-mobile
-通过 npm 安装 antd-mobile 和 postcss-pxtorem 。
+通过 npm 安装 antd-mobile 和 postcss-pxtorem 。<br/>
+注：不需要安装less或者sass。
 
 ## 修改配置文件
 > 将“.webpackrc”文件，更换为“.webpackrc.js”文件，并写入：
 ``` js
-import pxtorem from 'postcss-pxtorem';
-import config from './src/utils/config.js';
+import pxtorem from 'postcss-pxtorem'; // 引入的px转rem的依赖
+import config from './src/utils/config.js'; // ip地址路径，可写可不写
 export default {
     entry: "src/index.js",
-    disableCSSModules: true,
+    disableCSSModules: false, // 注： false为开启使用css，true是为开启使用sass或者less。
     browserslist:[
         "iOS >= 8", 
         "Android >= 4"
     ],
-    proxy: {
+    proxy: { // 前端反向代理
       "/v1": {
         target: 'http://' + config.ipAddr + '/v1/',
         changeOrigin: true,
-        pathRewrite: { "^/v1" : "" }
+        pathRewrite: { "^/v1" : "" } // 可写可不写
       }
     },
     env: {
       development: {
         extraBabelPlugins: [
-          ["import", { style: true, libraryName: "antd-mobile" ,libraryDirectory: "es"}]
+          ["import", { style: true, libraryName: "antd-mobile" ,libraryDirectory: "es"}] // 注：true为开启less或者sass写法，或者使用css则写法为： style: "css"
         ],
         publicPath: "/",
         theme: {
@@ -105,4 +107,25 @@ export default {
       }
     }
 }
+```
+## 引入转换单位文件
+
+移动端单位转换，还需在要 src/index.js中引入rem.js，其内容如下：
+
+``` js
+// 基准大小
+const baseSize = 32;
+// 设置 rem 函数
+function setRem () {
+  // 当前页面宽度相对于 1024 宽的缩放比例，可根据自己需要修改。如果设计稿是750，那就改为750, 移动端设计稿基本为750
+  const scale = document.documentElement.clientWidth / 750;
+  // 设置页面根节点字体大小
+  document.documentElement.style.fontSize = (baseSize * Math.min(scale, 2)) + 'px';
+}
+// 初始化
+setRem();
+// 改变窗口大小时重新设置 rem
+window.onresize = function () {
+  setRem()
+};
 ```

@@ -6,7 +6,7 @@
             <div class="content">
                 <h2 class="title">前端-小杨</h2>
                 <p class="subtitle">
-                    Front End Makes Us Silly B
+                    Welcome to My Notes
                 </p>
                 <div class="buttons">
                     <a href="/vue/">

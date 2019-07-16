@@ -1,5 +1,5 @@
-# React基础
-## 快速搭建脚手架
+# 快速上手
+## 安装react
 
 > 基于create-react-app官方脚手架搭建dva模式
 1. 全局安装react：**npm install create-react-app -g**
