@@ -42,7 +42,8 @@ module.exports = {
             title: 'React',
             collapsable: false,
             children: [
-              'one'
+              'install', // 安装
+              'base' // 基础
             ]
           }
         ],
