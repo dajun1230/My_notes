@@ -18,8 +18,8 @@ module.exports = {
         text: 'React',
         link: '/react/'
         },{
-        text: 'Dva',
-        link: '/dva/'
+        text: '其他',
+        link: '/other/'
         }, {
           text: 'Ps教程',
           link: '/ps/'
@@ -33,8 +33,8 @@ module.exports = {
               title: 'Vue',
               collapsable: false,
               children: [
-                'one',
-                'two'
+                'install',  // vue2.0 3.0环境搭建
+                'mpvue' // mpvue 微信小程序
               ]
             }
           ],
@@ -43,7 +43,8 @@ module.exports = {
             collapsable: false,
             children: [
               'install', // 安装
-              'base' // 基础
+              'base', // 基础
+              'rnative'
             ]
           }
         ],
@@ -56,11 +57,14 @@ module.exports = {
             ]
           }
         ],
-        '/dva/': [{
-          title: 'DVA',
+        '/other/': [{
+          title: '其他',
           collapsable: false,
           children: [
-            'one'
+            'environment', // 前端环境配置
+            'git', // git
+            'dva', // dva开发
+            'wepy' // wepy 小程序开发
           ]
         }]
       }
