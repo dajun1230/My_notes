@@ -52,8 +52,8 @@ module.exports = {
             title: 'PS',
             collapsable: false,
             children: [
-              'one',
-              'two'
+              'shortcut',
+              'basic'
             ]
           }
         ],
