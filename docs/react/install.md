@@ -239,3 +239,37 @@ npm install dva --save
 |- README.md
 |- yarn.lock
 ``` 
+## 生命周期
+> 挂载
+``` js
+当组件实例被创建并插入 DOM 中时，其生命周期调用顺序如下：
+
+● constructor()
+● static getDerivedStateFromProps()
+● render()
+● componentDidMount()
+
+注意:
+下述生命周期方法即将过时，在新代码中应该避免使用它们：
+UNSAFE_componentWillMount()
+``` 
+> 更新
+``` js
+当组件的 props 或 state 发生变化时会触发更新。组件更新的生命周期调用顺序如下：
+
+● static getDerivedStateFromProps()
+● shouldComponentUpdate() // 如果 shouldComponentUpdate() 返回值为 false，则不会调用 componentDidUpdate()。
+● render()
+● getSnapshotBeforeUpdate() // 不常用
+● componentDidUpdate(prevProps, prevState, snapshot)  // 会在更新后会被立即调用。首次渲染不会执行此方法。
+
+注意:
+下述方法即将过时，在新代码中应该避免使用它们：
+UNSAFE_componentWillUpdate()
+UNSAFE_componentWillReceiveProps()
+```
+> 卸载
+``` js
+当组件从 DOM 中移除时会调用如下方法：
+● componentWillUnmount() // 会在组件卸载及销毁之前直接调用
+```

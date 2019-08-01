@@ -15,6 +15,18 @@
                             <div class="right-icon"></div>
                         </button>
                     </a>
+                    <a href="/react/">
+                        <button type="button" class="button" role="button">
+                            React笔记
+                            <div class="right-icon"></div>
+                        </button>
+                    </a>
+                    <a href="/other/">
+                        <button type="button" class="button" role="button">
+                            其他笔记
+                            <div class="right-icon"></div>
+                        </button>
+                    </a>
                 </div>
                 <div class="gitContainer"></div>
             </div>
