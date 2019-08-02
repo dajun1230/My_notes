@@ -44,6 +44,7 @@ module.exports = {
             children: [
               'install', // 安装
               'base', // 基础
+              'demo', // 案例
               'rnative'
             ]
           }
@@ -63,6 +64,7 @@ module.exports = {
           children: [
             'environment', // 前端环境配置
             'git', // git
+            'es6', // ES6
             'dva', // dva开发
             'wepy' // wepy 小程序开发
           ]
