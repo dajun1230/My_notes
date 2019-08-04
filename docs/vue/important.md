@@ -1,11 +1,13 @@
-# 重要
+# 重要笔记
 
 ## 组件命名规范
 定义组件名的方式有两种：
+``` js
 1. 使用 kebab-case （当使用 kebab-case (短横线分隔命名) 定义一个组件时，你也必须在引用这个自定义元素时使用 kebab-case，例如 <my-component-name>。）
 2. 使用 PascalCase （当使用 PascalCase (首字母大写命名) 定义一个组件时，你在引用这个自定义元素时两种命名法都可以使用。也就是说 <my-component-name> 和 <MyComponentName> 都是可接受的。）
 ::: danger 注意
 尽管如此，直接在 DOM (即非字符串的模板) 中使用时**只有 kebab-case 是有效的**。
+```
 :::
 ## 动态组件
 
@@ -81,8 +83,8 @@ onst AsyncComponent = () => ({
 </keep-alive>
 ```
 ::: danger 注意
-这个 <keep-alive> 要求被切换到的组件都有自己的名字，不论是通过组件的 name 选项还是局部/全局注册。
-:::
+这个keep-alive要求被切换到的组件都有自己的名字，不论是通过组件的 name 选项还是局部/全局注册。
+::: 
 
 ## 全局注册组件
 
@@ -136,4 +138,62 @@ export default {
   }
 };
 </script>
+```
+
+## 插槽
+> slot: 在父组件中的子组件的标签内部写上标签，然后在子组件用<slot></slot>引用。
+
+父组件：
+``` js
+//slot组件
+<template>
+  <div class="slots">
+      slot的用法
+      <SlotChild>
+          <div class="no-name">我是嵌在子组件内不具有属性名的标签</div>
+      </SlotChild>
+  </div>
+</template>
+
+<script>
+import SlotChild from 'component/slotChild'
+export default {
+    name: 'slots',
+    components:{
+        SlotChild
+    },
+    data () {
+        return {
+      
+        }
+    }
+}
+</script>
+```
+子组件：
+``` js
+<template>
+  <div class="slot-child">
+　　　//在子组件中添加slot标签
+      <slot></slot>
+      我是slot的子组件
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'slotChild',
+  data () {
+    return {
+      
+    }
+  }
+}
+</script>
+```
+> 最终显示结果：
+``` sh
+slot的用法
+我是嵌在子组件内不具有属性名的标签
+我是slot的子组件
 ```
