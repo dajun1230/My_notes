@@ -34,6 +34,8 @@ module.exports = {
               collapsable: false,
               children: [
                 'install',  // vue2.0 3.0环境搭建
+                'basic', // vue基本写法
+                'important', // vue
                 'mpvue' // mpvue 微信小程序
               ]
             }
