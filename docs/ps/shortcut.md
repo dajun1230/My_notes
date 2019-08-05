@@ -45,6 +45,8 @@
 4. 取消编组 Ctrl + shift + G
 5. 合并图层 Ctrl + E
 6. 合并可见图层 Ctrl + shift + E
+7. 上移图层 shift + [
+8. 下移图层 shift + ]
 
 ## 选择
 1. 全选 Ctrl + A
@@ -62,8 +64,8 @@
 4. 缩小 Ctrl + - （或Alt + 滑轮）
 5. 满画布显示 Ctrl + 0
 6. 实际像素 Ctrl + 1
-7. 显示额外内容 Ctrl + H
-8. 显示网格 Ctrl + Alt + '
+7. 显示/隐藏辅助线 Ctrl + H
+8. 显示网格 Ctrl + '
 9. 显示标尺 Ctrl + R
 10. 对齐 Ctrl + shift + ;
 11. 锁定参考线 Ctrl + Alt + ;

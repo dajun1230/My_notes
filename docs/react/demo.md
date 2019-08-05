@@ -1,5 +1,33 @@
 # 经典案例
 
+## fetch上传文件
+``` js
+// services.js
+async function uploadFile(params) {
+  return fetch(`/api/v1/template/${params}`, {
+    methods: 'post',
+    headers: {
+
+    },
+    body: params.formData // body不允许传对象
+  })
+}
+```
+页面触发
+``` js
+upload = (file) => {
+  let formData = new FormData(); 
+  // template_name 为传的字段名字，file.name 为传的字段名所对应的值
+  formData.append('template_name', file.name); // 可以通过formData.append增加多个字段名、值
+  formData.append('template_file', file);
+  uploadFile(formData).then(res => {
+    if (res.status === 200) {
+      let resData = res.json;
+    }
+  })
+}
+```
+
 ## xlsx应用
 > 读取excel表格文件的全部内容或者读取某个文件某个单元格的内容，将其渲染
 
@@ -240,6 +268,57 @@ class MapBd extends Component {
     return (
       <div id="container" style={{height: '100%'}}></div>
     )
+  }
+}
+```
+
+## 处理多个输入
+> 当需要处理多个 input 元素时，我们可以给每个元素添加 name 属性，并让处理函数根据 event.target.name 的值选择要执行的操作。
+``` js
+// 例如：
+class Reservation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isGoing: true,
+      numberOfGuests: 2
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  render() {
+    return (
+      <form>
+        <label>
+          参与:
+          <input
+            name="isGoing"
+            type="checkbox"
+            checked={this.state.isGoing}
+            onChange={this.handleInputChange} />
+        </label>
+        <br />
+        <label>
+          来宾人数:
+          <input
+            name="numberOfGuests"
+            type="number"
+            value={this.state.numberOfGuests}
+            onChange={this.handleInputChange} />
+        </label>
+      </form>
+    );
   }
 }
 ```
