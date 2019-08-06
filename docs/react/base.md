@@ -61,8 +61,12 @@ import { connect } from 'dva';
 
 class Bell extends React.Component {
   constructor(props) {
-    super();
-    this.state = {}
+    super(props);
+    this.state = {
+      isToggleOn: false
+    }
+    // 为了在回调中使用 `this`，这个绑定是必不可少的
+    this.handleClick = this.handleClick.bind(this); // 第一种方式
   }
 
   componentDidMount(){
@@ -71,11 +75,29 @@ class Bell extends React.Component {
 
   componentWillReceiveProps(nextProps){
 
+  };
+
+  handleClick() {
+    this.setState(state => ({
+      isToggleOn: !state.isToggleOn
+    }));
   }
+
+  // handleClick = () => { // 第二种方式
+  //   this.setState(state => ({
+  //     isToggleOn: !state.isToggleOn
+  //   }));
+  // }
 
   render () {
     return (
-      <div></div>
+      <div>
+      {--或者使用<button onClick={(e) => {this.handleClick(id, e)}> 第三种方式--}
+      {--或者使用<button onClick={this.handleClick.bind(this, id)}> 第四种方式--}
+        <button onClick={this.handleClick}> 
+          {this.state.isToggleOn ? 'ON' : 'OFF'}
+        </button>
+      </div>
     );
   }
 }
@@ -264,3 +286,5 @@ class Children extends Component {
     }
 }
 ```
+
+## 处理多个输入

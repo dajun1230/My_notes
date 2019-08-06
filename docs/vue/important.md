@@ -1,5 +1,114 @@
 # 重要笔记
 
+## 父子组件间传值
+1. 父组件向子组件
+> 父组件
+``` js
+<template>
+    <div class="parent">
+        <children v-bind:message="parentMsg"></children>
+    </div>
+</template>
+
+<script>
+import Children from '@/components/Children';
+export default {
+    name: 'Parent',
+    components: {
+        Children
+    },
+    data () {
+        return {
+            parentMsg: 'hell wordld ！'
+        }
+    }
+}
+</script>
+
+<style>
+</style>
+```
+> 子组件
+``` js
+<template>
+    <div class="children">
+        <p>{{message}}</p>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'Children',
+    props: ["message"]
+}
+</script>
+
+<style>
+</style>
+```
+
+2. 子组件向父组件传值
+> 子组件
+``` js
+<template>
+    <div class="children">
+        <p>{{message}}</p>
+        <button v-on:click="sendMsgToParent"></button>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'Children',
+    props: ["message"],
+    data () {
+      return {
+        msg: 'this message is from child'
+      }
+    },
+    methods: {
+      sendMsgToParent () {
+        this.$emit('listenToChildEvent', this.msg);
+      }
+    }
+}
+</script>
+
+<style>
+</style>
+```
+> 父组件
+``` js
+<template>
+    <div class="parent">
+        <children v-on:listenToChildEvent="showMsgFromChild"></children>
+    </div>
+</template>
+
+<script>
+import Children from '@/components/Children';
+export default {
+    name: 'Parent',
+    components: {
+        Children
+    },
+    data () {
+        return {
+            parentMsg: 'hell wordld ！'
+        }
+    },
+    methods: {
+      showMsgFromChild (data) {
+        console.log(data);
+      }
+    }
+}
+</script>
+
+<style>
+</style>
+```
+
 ## 组件命名规范
 定义组件名的方式有两种：
 ``` js
