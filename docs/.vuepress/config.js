@@ -55,8 +55,9 @@ module.exports = {
             title: 'PS',
             collapsable: false,
             children: [
-              'shortcut',
-              'basic'
+              'shortcut', // 快捷键
+              'basic', // 基础键介绍
+              'stageone' // 知识点
             ]
           }
         ],
