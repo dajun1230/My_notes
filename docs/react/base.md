@@ -1,5 +1,42 @@
 # 基础知识
 
+## 组件区别
+无状态组件
+``` js
+import React from 'react'
+
+ const Example = function () {
+    return (
+        <div>
+            
+        </div>
+    )
+}
+export default  Example;
+```
+有状态组件
+``` js
+import React, { Component } from 'react'
+
+class Example extends Component {、
+  constructor() {
+    super();
+    this.state={
+
+    }
+  }
+  render() {
+      return (
+          <div>
+              
+          </div>
+      )
+  }
+}
+
+export default Example;
+```
+
 ## 配置
 > src>index.js
 ``` js

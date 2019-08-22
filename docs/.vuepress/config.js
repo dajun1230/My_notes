@@ -46,6 +46,7 @@ module.exports = {
             children: [
               'install', // 安装
               'base', // 基础
+              'learn', // 学习
               'demo', // 案例
               'rnative'
             ]
