@@ -1,28 +1,32 @@
 # 基础知识
 
 ## 组件区别
-无状态组件
+1. **无状态组件**: 
+无状态组件主要用来定义模板，接收来自父组件props传递过来的数据，使用{props.xxx}的表达式把props塞到模板里面。无状态组件应该保持模板的纯粹性，以便于组件复用。创建无状态组件如下：
 ``` js
-import React from 'react'
+import React from 'react';
 
- const Example = function () {
+ const Example = () => {
     return (
         <div>
             
         </div>
     )
 }
+
 export default  Example;
 ```
-有状态组件
+2. **有状态组件**: 
+有状态组件主要用来定义交互逻辑和业务数据（如果用了Redux，可以把业务数据抽离出去统一管理），使用{this.state.xxx}的表达式把业务数据挂载到容器组件的实例上（有状态组件也可以叫做容器组件，无状态组件也可以叫做展示组件），然后传递props到展示组件，展示组件接收到props，把props塞到模板里面。创建有状态组件如下：
 ``` js
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-class Example extends Component {、
-  constructor() {
-    super();
+class Example extends Component {
+  constructor(props) {
+    super(props);
     this.state={
-
+      nameOne: props.name,
+      nameTwo: this.props.name // super()方法中传递了props属性，this.props才可以获取到name属性
     }
   }
   render() {
@@ -36,6 +40,34 @@ class Example extends Component {、
 
 export default Example;
 ```
+
+## props传值区别
+> 其实，上述代码中props.name和this.props.name的值都是一样的，但是它俩还是有区别的。
+1. construtor() --- 构造方法， 这是ES6对类的默认方法，通过 new 命令生成对象实例时自动调用该方法。并且，该方法是类中必须有的，如果没有显示定义，则会默认添加空的constructor( )方法。
+2. super() --- 继承，在class方法中，继承是使用 extends 关键字来实现的。子类 必须 在 constructor()调用 super()方法，否则新建实例时会报错。
+
+::: danger 注意
+报错的原因是：子类是没有自己的 this 对象的，它只能继承自父类的 this 对象，然后对其进行加工，而super()就是将父类中的this对象继承给子类的。没有 super，子类就得不到 this 对象。
+::: 
+
+constructor中传递的props就是子组件本身的属性props，但是this.props.name中的这个props却不是子组件的属性props，虽然值都是一样的，这个props其实在调用super方法的时候被传递到了Component这个父类中去了，所以this.props.name获取到的是Component父类中的props属性。看下React的源码:
+``` js
+function Component(props, context, updater) {
+  this.props = props;
+  this.context = context;
+  this.refs = emptyObject;
+  this.updater = updater || ReactNoopUpdateQueue;
+}
+```
+发现没，子类super方法把props参数传递给了父类Component，Component把props参数挂载到它的实例属性props上了。所以，你只有给super方法中传递props参数，在构造函数里才能用this,props.xxx。如果super方法中不传递props参数，获取this.props.name的值就会报错。获取this.props显示为undifined.
+
+::: warning 注意
+1. 如果你用到了constructor就必须写super(),是用来初始化this的，可以绑定事件到this上;
+2. 如果你在constructor中要使用this.props,就必须给super加参数：super(props)；
+3. （无论有没有constructor，在render中this.props都是可以使用的，这是React自动附带的；）
+4. 如果没用到constructor,是可以不写的；React会默认添加一个空的constructor;
+5. **只有一个理由需要传递props作为super()的参数，那就是你需要在构造函数内使用this.props**。
+:::
 
 ## 配置
 > src>index.js
