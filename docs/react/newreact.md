@@ -152,13 +152,13 @@ export default App;
 
 **Fragment标签讲解**
 
-加上最外层的DIV，组件就是完全正常的，但是你的布局就偏不需要这个最外层的标签怎么办?比如我们在作Flex布局的时候,外层还真的不能有包裹元素。这种矛盾其实React16已经有所考虑了，为我们准备了<Fragment>标签。
+加上最外层的DIV，组件就是完全正常的，但是你的布局就偏不需要这个最外层的标签怎么办?比如我们在作Flex布局的时候,外层还真的不能有包裹元素。这种矛盾其实React16已经有所考虑了，为我们准备了Fragment标签。
 
-要想使用<Fragment>，需要先进行引入。
+要想使用Fragment，需要先进行引入。
 ``` js
 import React,{Component,Fragment } from 'react';
 ```
-然后把最外层的<div>标签，换成<Fragment>标签，代码如下。
+然后把最外层的div标签，换成Fragment标签，代码如下。
 ``` js
 import React, {Component,Fragment } from 'react';
 
@@ -349,3 +349,183 @@ React developer tools有三种颜色，三种颜色代表三种状态：
 :::
 
 ## React高级-PropTypes校验传递值
+在父组件向子组件传递数据时，使用了属性的方式，也就是props，但“小姐姐服务菜单”的案例并没有任何的限制。这在工作中时完全不允许的，因为大型项目，如果你不校验，后期会变的异常混乱，业务逻辑也没办法保证。
+
+**PropTypes的简单应用**
+
+我们在往子组件里传递了4个值，有字符串，有数字，有方法，这些都是可以使用PropTypes限制的。在使用需要先引入PropTypes。
+``` js
+import PropTypes from 'prop-types';
+```
+引入后，就可以在组件的下方进行引用了，需要注意的是子组件的最下面（不是类里边），写入下面的代码：
+``` js
+Example.propTypes={
+    content:PropTypes.string,
+    deleteItem:PropTypes.func,
+    index:PropTypes.number
+}
+```
+给出完成代码，如下：
+``` js
+import React from 'react';
+import PropTypes from 'prop-types';
+
+class Children extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+
+        }
+    }
+
+    getItem(index) {
+        this.props.deleteItem(index);
+    }
+
+    render() {
+        return (<li onClick={this.getItem.bind(this, this.props.index)}>{this.props.content}</li>)
+    }
+}
+
+export default Children;
+
+Children.propTypes = {
+    index: PropTypes.number.isRequired, // isRequired为必传，具体请查看官网
+    content: PropTypes.string,
+    deleteItem: PropTypes.func
+}
+
+Children.defaultProps = { // 为设置props的初始值
+    name: '小杨'
+}
+```
+**使用默认值defaultProps**
+
+如上面代码所示，可以通过defaultProps设置props的初始值。
+
+## React高级-ref的使用方法
+
+## React高级-生命周期讲解-1
+**React生命周期图**
+
+通过这张图你可以看到React声明周期的四个大阶段：
+
+1. Initialization:初始化阶段。
+2. Mounting: 挂在阶段。
+3. Updation: 更新阶段。
+4. Unmounting: 销毁阶段
+
+**什么是生命周期函数**
+
+如果非要用一句话把生命周期函数说明白，我觉的可以用这句话来说明：
+``` sh
+生命周期函数指在某一个时刻组件会自动调用执行的函数
+```
+
+举例：js文件里边的render()函数，就是一个生命周期函数，它在state发生改变时自动执行。这就是一个标准的自动执行函数。
+
+constructor不算生命周期函数。
+
+constructor我们叫构造函数，它是ES6的基本语法。虽然它和生命周期函数的性质一样，但不能认为是生命周期函数。
+
+但是你要心里把它当成一个生命周期函数，我个人把它看成React的Initialization阶段，定义属性（props）和状态(state)。
+
+**1.Mounting阶段**
+
+Mounting阶段叫挂载阶段，伴随着整个虚拟DOM的生成，它里边有三个小的生命周期函数，分别是：
+
+1. componentWillMount : 在组件即将被挂载到页面的时刻执行。
+2. render : 页面state或props发生变化时执行。
+3. componentDidMount : 组件挂载完成时被执行。
+
+**componentWillMount代码**
+``` js
+componentWillMount(){
+    console.log('componentWillMount----组件将要挂载到页面的时刻')
+}
+```
+**componentDidMount代码**
+``` js
+componentDidMount(){
+    console.log('componentDidMount----组件挂载完成的时刻执行')
+}
+```
+**render代码**
+``` js
+render(){
+    console.log('render---组件挂载中.......')
+}
+```
+这时候我们查看一下控制台，会为我们打出如下提示：
+``` sh
+componentWillMount----组件将要挂载到页面的时刻执行
+render----开始挂载渲染
+componentDidMount----组件挂载完成的时刻执行
+```
+这也是生命周期的顺序。
+::: warning 注意
+componentWillMount和componentDidMount这两个生命周期函数，只在页面刷新时执行一次，而render函数是只要有state和props变化就会执行。
+:::
+
+**2.Updation**
+
+eact生命周期中的Updation阶段,也就是组件发生改变的更新阶段，这是React生命周期中比较复杂的一部分，它有两个基本部分组成，一个是props属性改变，一个是state状态改变（这个在生命周期的图片中可以清楚的看到）。
+
+**shouldComponentUpdate函数**
+
+shouldComponentUpdate函数会在组件更新之前，自动被执行。比如写入下面的代码:
+``` js
+shouldComponentUpdate(){
+    console.log('shouldComponentUpdate---组件发生改变前执行');
+    return true;
+}
+```
+::: danger 注意
+它要求返回一个布尔类型的结果，必须有返回值，上述代码中就直接返回一个true
+:::
+现在就可以在控制台console里看到结果了，并且结果是每次文本框发生改变时都会随着改变。如果你返回了false，这组件就不会进行更新了。 简单点说，就是返回true，就同意组件更新;返回false,就反对组件更新。
+
+**omponentWillUpdate函数**
+componentWillUpdate在组件更新之前，但shouldComponenUpdate之后被执行。但是如果shouldComponentUpdate返回false，这个函数就不会被执行了。
+``` js
+//shouldComponentUpdate返回true才会被执行。
+componentWillUpdate(){
+    console.log('componentWillUpdate---组件更新前，shouldComponentUpdate函数之后执行')
+}
+```
+**componentDidUpdate**
+
+componentDidUpdate在组件更新之后执行，它是组件更新的最后一个环节。
+``` js
+componentDidUpdate(){
+    console.log('componentDidUpdate----组件更新之后执行')
+}
+```
+为了方便我们看出结果，可以在每个函数前加上序号。最后我们可以看到控制台输出的结果如下：
+``` sh
+1-shouldComponentUpdate---组件发生改变前执行
+2-componentWillUpdate---组件更新前，shouldComponentUpdate函数返回true之后执行
+3-render----开始挂载渲染
+4-componentDidUpdate----组件更新之后执行
+```
+**componentWillReceiveProps 函数**
+
+如果是一个顶层组件，它并没接收任何的props，则不会执行。
+``` js
+componentWillReceiveProps(){
+    console.log('child - componentWillReceiveProps')
+}
+```
+也就是说，在组件中有接收通过props传来的参数的时候，在顶层组件再次渲染的时候，就会执行该钩子函数。
+
+**3.Unmounting阶段**
+
+**componentWillUnmount函数**
+``` js
+//当组件从页面中删除的时候执行
+componentWillUnmount(){
+    console.log('child - componentWillUnmount')
+}
+```
+
+## React高级-生命周期改善程序性能

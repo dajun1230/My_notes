@@ -33,6 +33,8 @@ module.exports = {
               title: 'Vue',
               collapsable: false,
               children: [
+                'vue2x-1',
+                'vue2x-2',
                 'install',  // vue2.0 3.0环境搭建
                 'basic', // vue基本写法
                 'important', // vue
