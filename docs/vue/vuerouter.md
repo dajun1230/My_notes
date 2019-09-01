@@ -107,7 +107,7 @@ export default new Router({
 ## vue-router配置子路由
 **一、改造App.vue的导航代码**
 
-我们需要先改造app.vue的导航代码，来实现基本的导航功能。我们用<router-link>标签增加了两个新的导航链接。
+我们需要先改造app.vue的导航代码，来实现基本的导航功能。我们用router-link标签增加了两个新的导航链接。
 
 **App.vue代码**
 ``` js
