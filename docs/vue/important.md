@@ -1,5 +1,68 @@
 # 重要笔记
 
+## Vue在Vs Code中的断点调试
+[在Chrome和VS Code中调试Vue.js](https://github.com/Microsoft/vscode-recipes/blob/master/vuejs-cli/README.md)，具体请参考网址。下面以Vue 2.X版本做调试：（两种方法）
+
+**一、直接在要调试的代码处输入debugger，然后重新运行代码**
+
+**二、Vs Code与Chrome联调**
+
+具体操作步骤如下：
+
+1.设置参数
+
+Vue 2.X中在config/index.js并找到devtool物业。将其更新为：
+``` js
+// devtool: 'cheap-module-eval-source-map', 旧
+devtool: 'source-map', // 新
+```
+Vue CLI 3.X中devtool需要设置在里面vue.config.js。如果文件尚不存在，请在项目的根目录中创建该文件。
+``` js
+module.exports = {
+  configureWebpack: {
+    devtool: 'source-map'
+  }
+}
+```
+2.在Vs Code中点击“调试-启动调试”或直接按“F5”键，选择**Chrome**，然后会在开发文档目录下生成.vscode文件夹
+``` js
+- vuecli // 项目目录文件夹
+  |- .vscode
+    |- launch.json
+  |- build
+  |- config
+  ...
+```
+3.配置launch.json文件
+``` js
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "vuejs: chrome",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/src",
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./src/*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*"
+      }
+    }
+  ]
+}
+```
+4.启动项目
+``` js
+npm start
+```
+5.设置断点
+6.按“F5”键启动调试，会重新打开一个新窗口，同时Vs Code中代码执行到断点处则会暂停，也可打开开发者工具查看"Sources"输出结果情况
+7. shift + F5 关闭调试
+
 ## 父子组件间传值
 1. 父组件向子组件
 > 父组件
