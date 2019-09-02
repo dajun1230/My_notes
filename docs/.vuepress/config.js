@@ -17,6 +17,9 @@ module.exports = {
         }, {
         text: 'React',
         link: '/react/'
+        }, {
+          text: 'Flutter',
+          link: '/flutter/'
         },{
         text: '其他',
         link: '/other/'
@@ -37,6 +40,7 @@ module.exports = {
                 'vue2x-2',  // vue基础2
                 'install',  // vue2.0 3.0环境搭建
                 'vuerouter', // vue router
+                'vuex', // vuex
                 'basic', // vue基本写法
                 'important', // vue
                 'mpvue' // mpvue 微信小程序
@@ -53,6 +57,14 @@ module.exports = {
               'learn', // 学习
               'demo', // 案例
               'rnative'
+            ]
+          }
+        ],
+        '/flutter/': [{
+          title: 'Flutter',
+          collapsable: false,
+          children: [
+            'basic', // 基础
             ]
           }
         ],
