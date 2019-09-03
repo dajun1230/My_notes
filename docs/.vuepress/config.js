@@ -64,7 +64,10 @@ module.exports = {
           title: 'Flutter',
           collapsable: false,
           children: [
-            'basic', // 基础
+            'basic1', // 基础1
+            'basic2', // 基础2
+            'basic3', // 基础3
+            'basic4', // 基础4
             ]
           }
         ],
