@@ -95,7 +95,9 @@ flutter doctor --android-licenses
 ```
 然后会提示你选Y/N，不要犹豫，一律选择Y，就可以把证书安装好。（说的都是一大堆一大堆的英文，我也看不懂是啥）
 
-到这里windows的开发环境就安装的差不多了。
+到这里windows的开发环境就安装的差不多了，此时，我们再次打开终端，然后输入“flutter doctor”验证，如果出现下图，则表示都安装成功了。
+
+![An image](./images/Flutter_success.png)
 
 ### 安装Android studio时踩过的坑
 1. C盘(C:\Users\Administrator)目录下无AppData文件夹，如下图所示：
@@ -243,4 +245,200 @@ source ~/.bash_profile
 ## 安装AVD虚拟机 Flutter跑起来
 **Android studio新建Flutter项目**
 
-打开Andorid Studio ，会出现下面的界面，我们选择第二项，新建Flutter项目。
+打开Andorid Studio ，会出现下面的界面，我们选择第二项，新建Flutter项目。如图所示：
+
+![An image](./images/Flutter_run1.png)
+
+（如果你第一次新建项目，可能会有些慢。）
+
+打开第二个窗口后，选择第一个选项Flutter Application(flutter应用)。
+
+![An image](./images/Flutter_run2.png)
+
+这步完成后，系统就会自动为我们创建一个Flutter项目（新建项目的过程也是很慢的，它要去谷歌下载gradle，这个东西很容下载失败，如果失败，可以多反复试几次）。
+
+![An image](./images/Flutter_run3.png)
+
+如果你到了这一步，坚持住，马上成功了。
+
+### 安装AVD虚拟机
+
+1. 现在需要一个虚拟机来运行我们的程序，可以点击Android Studio中的上方菜单tool -AVD Manager选项或者点击如下图所示红色圈中，选择AVD Manager。
+
+![An image](./images/Flutter_run4.png)
+
+2. 出现新建菜单，选择Create Virtual Device.....,如果你一个虚拟机也没建过，可以点击左下角进行安装、创建虚拟机，目前图示上以安装三个版本虚拟机。
+
+![An image](./images/Flutter_run5.png)
+
+### 让Flutter跑起来
+具体操作步骤如下：
+
+1. 打开Android Studio，引入项目文件
+2. 打开虚拟机，操作步骤如下图所以，先点击图一按钮，然后选择一款虚拟机，点击图二按钮
+
+图一：
+![An image](./images/Flutter_run6.png)
+
+图二：
+![An image](./images/Flutter_run7.png)
+
+3. 待模拟器启动完成，然后点击运行按钮，如下图三所以，最后出现图四，则运行成功
+
+图三：
+![An image](./images/Flutter_run8.png)
+
+图四：
+![An image](./images/Flutter_run9.png)
+
+出现上图，则代表Flutter项目搭建完成。
+
+## VSCode下如何玩转Flutter
+
+### VSCode安装Flutter插件
+打开VSCode的Flutter插件界面，然后用在搜索框中输入Flutter,第一个就是Flutter插件了。点击install就可以进行安装了（具体看下图）。
+
+![An image](./images/Flutter_vs1.png)
+
+安装完成后，是需要重启VSCode的。有的小伙伴肯定会问用不用装Dart插件，其实是用装的，只不过安装完Flutter插件后，Dart也为我们安装好了，不用我们自己安装。
+
+这时候已经可以编写Flutter程序了，但是还没有预览的地方，也就是虚拟机没有开启。
+
+### 一条命令快速开启虚拟机
+现在想开启虚拟机需要打开Android Studio,然后再打开AVD虚拟机，我的电脑足足要等2分钟左右(土豪电脑除外)，我反正是不能接受的，一点不符合极客精神。下面就用一条命令，或者说制作一个批处理文件，来直接开启AVD虚拟机，这样就不用再等两分钟来开启Android Studio了。
+
+**开启虚拟机需要两个步骤：**
+
+1. 打开emulator.exe这个程序，你可以巧妙利用windows的查找工具进行查找。
+2. 打开你设置的虚拟机，批处理时需要填写你设置的虚拟机名称。
+具体步骤如下：
+
+新建一个xxx.bat文件到桌面，xxx的意思是，你可以自己取名字，随意叫什么都可以。我这里叫EmulatorRun.bat.
+查找emulator.exe文件的路径，把查找到的路径放到bat文件中（如图）。 
+
+**默认路径为：(C:\Users\Administrator\AppData\Local\Android\Sdk\emulator)**
+
+一般会查找到两个emulator.exe文件，一个是在tools目录下，一个是在emulator目录下，我们选择emulator目录下的这个,复制它的路径。
+``` js
+C:\Users\Administrator\AppData\Local\Android\Sdk\emulator\emulator.exe
+```
+(特别说明，你的和我的很有可能不一样，你要复制i电脑中的路径，不要复制这里的代码)
+
+3. 打开Android Studio，并查看你的AVD虚拟机名称（如图所示）。 
+
+![An image](./images/Flutter_vs2.png)
+
+如果你觉的输入不方便和怕出错，你可以点击图片右边的笔型按钮，进入编辑模式，复制这个名称。 
+
+4. 然后根据你复制的名称，把bat文件输入成如下形式。
+``` js
+C:\Users\Administrator\AppData\Local\Android\Sdk\emulator\emulator.exe -netdelay none -netspeed full -avd Nexus_5X_API_29
+```
+5. 进行保存后双击bat文件，就可以迅速打开虚拟机了。
+
+参数解释：
+``` sh
+-netdelay none :设置模拟器的网络延迟时间，默认为none，就是没有延迟。
+-netspeed full: 设置网络加速值，full代表全速。
+```
+### flutter run 开启预览
+现在模拟器也有了，VSCode也支持Flutter开发了.现在可以在VSCode中直接打开终端，快捷键是ctrl+~，然后在终端中输入下面的命令。
+``` js
+flutter run
+```
+
+![An image](./images/Flutter_vs2.png)
+
+到此处，终于搭建出了适合前端程序员的开发环境。
+
+## 写一个HelloWorld程序
+环境搭建好后，按照惯例就是写一个HelloWorld程序，
+
+**HelloWorld整体代码**
+
+先快速写一个最简单的结构体，这个界面只包含两部分，头部订单的蓝色bar条和屏幕中间区域的内容。（请看下面代码）
+
+这段代码写在根目录\lib\main.dart文件中，这就是Flutter主文件。
+``` js
+import 'package:flutter/material.dart';
+//主函数（入口函数），下面我会简单说说Dart的函数
+void main() =>runApp(MyApp());
+// 声明MyApp类
+class MyApp extends StatelessWidget{
+  //重写build方法
+  @override
+  Widget build(BuildContext context){
+    //返回一个Material风格的组件
+   return MaterialApp(
+      title:'Welcome to Flutteraa',
+      home:Scaffold(
+        //创建一个Bar，并添加文本
+        appBar:AppBar(
+          title:Text('Welcome to Flutter'),
+        ),
+        //在主体的中间区域，添加一个hello world 的文本
+        body:Center(
+          child:Text('Hello World'),
+        ),
+      ),
+    );
+  }
+}
+```
+写完后打开终端，运行flutter run,等待一小会，就会看到虚拟机中显示了Hello World的内容。
+
+![An image](./images/Flutter_vs01.png)
+
+也许你对上面的语法还不够了解，但你不必惊慌，我们会一点点进行说明，那先来看一下Dart中的函数。
+
+### Dart语法Function函数
+Dart是面向对象的语言，即使是函数也是对象，并且属于Function类型的对象。这意味着函数可以分配给变量或作为参数传递给其他函数。当然你也可以像JavaScript一样，调用一个函数。
+
+比如我们写Hello World中的第2行，就是一个函数。
+``` js
+void main() =>runApp(MyApp());
+```
+因为这个函数体里只有一行代码，所以可以直接使用=>来省略{}，只有函数体里只有一行时，才可以使用，否则请使用大括号。
+
+（ps:学习Dart语法时你要记住一条，Dart里一切皆对象，包括数字和函数.......,没对象的程序员小哥哥可要抓紧学习了，程序中自有颜如玉的时代到了）
+
+### StatefulWidget和StatelessWidget
+
+StatefulWidget ： 具有可变状态的窗口部件，也就是你在使用应用的时候就可以随时变化，比如我们常见的进度条，随着进度不断变化。
+StatelessWidget：不可变状态窗口部件，也就是你在使用时不可以改变，比如固定的文字（写上后就在那里了，死也不会变了）。
+这个HelloWorld代码就继承了不可变窗口部件StatelessWidget。
+
+### VSCode中如何热加载
+
+用VSCode编写Flutter不好的一点就是要手动加载更新应用，个人感觉这至少会降低10%的工作效率。
+
+当我们运行flutter run以后，会有一段红色文字的提示，说明了我们可以作的事情。
+``` js
+To hot reload changes while running, press "r". To hot restart (a
+nd rebuild state), press "R".
+An Observatory debugger and profiler on Android SDK built for x86 is
+available at: http://127.0.0.1:64590/
+You can dump the widget hierarchy of the app (debugDumpApp) by pressing "w".
+To dump the rendering tree of the app (debugDumpRenderTree), press "t".
+For layers (debugDumpLayerTree), use "L"; for accessibility (debugDumpSemantics), use "S" (for traversal order) or "U" (for inverse hit test order).
+To toggle the widget inspector (WidgetsApp.showWidgetInspectorOverride), press "i".
+To toggle the display of construction lines (debugPaintSizeEnabled),
+press "p".
+To simulate different operating systems, (defaultTargetPlatform), press "o".
+To display the performance overlay (WidgetsApp.showPerformanceOverlay), press "P".
+To save a screenshot to flutter.png, press "s".
+To repeat this help message, press "h". To detach, press "d"; to quit, press "q".
+```
+我们来看几个重点的：
+``` sh
+r 键：点击后热加载，也就算是重新加载吧。
+p 键：显示网格，这个可以很好的掌握布局情况，工作中很有用。
+o 键：切换android和ios的预览模式。
+q 键：退出调试预览模式。
+常用的一般就这些，剩下的命令以后碰到我们再进行讲解。
+```
+
+如果你觉的这太麻烦了，我们可以开启Debug模式，这时就可以实现真正的热加载了（我们保存，效果立即就会改变），但有时报错也挺烦人的。（下图时Debug模式）
+
+![An image](./images/Flutter_vs02.png)
+
