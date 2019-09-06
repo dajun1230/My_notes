@@ -21,6 +21,12 @@
                             <div class="right-icon"></div>
                         </button>
                     </a>
+                    <a href="/flutter/">
+                        <button type="button" class="button" role="button">
+                            Flutter笔记
+                            <div class="right-icon"></div>
+                        </button>
+                    </a>
                     <a href="/other/">
                         <button type="button" class="button" role="button">
                             其他笔记

@@ -132,6 +132,8 @@ props与state的区别
 ## React组件：生命周期
 > 一个组件完整的生命周期包含实例化阶段、活动阶段、销毁阶段三个阶段。每个阶段又由相应的方法管理。
 
+![An image](./images/react_life.png)
+
 过程中涉及三个主要的动作术语：
 
 ● mounting:表示正在挂接虚拟DOM到真实DOM。

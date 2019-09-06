@@ -341,6 +341,11 @@ C:\Users\Administrator\AppData\Local\Android\Sdk\emulator\emulator.exe -netdelay
 -netdelay none :设置模拟器的网络延迟时间，默认为none，就是没有延迟。
 -netspeed full: 设置网络加速值，full代表全速。
 ```
+### 在VSCode中直接打开虚拟机
+在安装了Flutter和Dart插件以后，在VSCode的右下角显示No Devices,我们直接点击它，就会显示我们电脑中安装的虚拟机，如果你电脑上没有，也可以进行安装。
+
+![An image](./images/Flutter_vsopen.png)
+
 ### flutter run 开启预览
 现在模拟器也有了，VSCode也支持Flutter开发了.现在可以在VSCode中直接打开终端，快捷键是ctrl+~，然后在终端中输入下面的命令。
 ``` js
