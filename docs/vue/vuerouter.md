@@ -499,6 +499,13 @@ export default new Router({
 ● in-out:新元素先进入过渡，完成之后当前元素过渡离开。
 ● out-in:当前元素先进行过渡离开，离开完成后新元素过渡进入。
 ```
+具体用法：
+``` js
+// 默认mode的值为in-out
+<transition name="fade" mode="out-in">
+  <router-view ></router-view>
+</transition>
+```
 
 ## mode的设置和404页面的处理
 
@@ -665,3 +672,201 @@ export default {
   }
 }
 ```
+
+## 实例-VueRouter嵌套路由
+书写一个vue的三级目录导航，具体效果如下图所示：
+
+![An image](./images/Vue_demo.png)
+
+注：图中红色圈为一级目录，蓝色圈为二级目录，紫色圈为三级目录内容。
+
+1. 在根目录下新建文件夹pages，并且在pages文件夹下，新增Home.vue文件以及video、course文件夹
+
+Home.vue：
+``` js
+<template>
+    <div class="home">
+        <div class="left">
+            <h3>Home首页</h3>
+            <ul>
+                <li><router-link :to="{name: 'video'}">在线视频</router-link></li>
+                <li><router-link :to="{name: 'course'}">基础课程</router-link></li>
+                <li><router-link to="">师资力量</router-link></li>
+            </ul>
+        </div>
+        <div class="right">
+            <router-view />
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'flutterdemo',
+    data () {
+        return {}
+    }
+}
+</script>
+
+<style>
+.home{
+    width: 100%;
+    height: 800px;
+    display: flex;
+}
+.left{
+    width: 20%;
+    background: yellow;
+}
+.right{
+    width: 60%;
+    background: #999;
+}
+</style>
+```
+2. 在video文件夹下新增video.vue、fluttervideo.vue、vuevideo.vue文件
+
+video.vue：
+``` js
+<template>
+    <div id="video">
+        <h3>视频页面</h3>
+        <div class="top">
+            <ul>
+                // 同时也可以使用<li><router-link to="/home/video/fluttervideo">Flutter视频</router-link></li>
+                <li><router-link :to="{name: 'fluttervideo'}">Flutter视频</router-link></li>
+                <li><router-link :to="{name: 'vuevideo'}">Vude视频</router-link></li>
+            </ul>
+        </div>
+        <div class="bottom">
+            <router-view />
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'videos',
+    data () {
+        return {
+
+        }
+    }
+}
+</script>
+
+<style>
+.top{
+    background: #09f7c7;
+}
+#video h3{
+    background: #09f7c7;
+}
+.top ul {
+    display: flex;
+}
+.top ul li:nth-child(1) {
+    margin-right: 20px;
+}
+</style>
+```
+fluttervideo.vue：
+``` js
+<template>
+    <div>
+        <h4>Flutter视频</h4>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'flutterdemo',
+    data () {
+        return {
+
+        }
+    }
+}
+</script>
+
+<style>
+
+</style>
+```
+vuevideo.vue：
+``` js
+<template>
+    <div>
+        <h4>Vue视频</h4>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'flutterdemo',
+    data () {
+        return {
+
+        }
+    }
+}
+</script>
+
+<style>
+
+</style>
+```
+3. 修配路由index.js文件
+``` js
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '@/pages/Home'
+import Course from '@/pages/coures/Course'
+import Videos from '@/pages/video/Video'
+import Vuevideo from '@/pages/video/Vuevideo'
+import Fluttervideo from '@/pages/video/Fluttervideo'
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'index',
+      component: Index
+    }, {
+      path: '/home',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'course',
+          name: 'course',
+          component: Course
+        }, {
+          path: 'video',
+          name: 'video',
+          redirect:'video/fluttervideo', // 默认跳转此页面
+          component: Videos,
+          children: [
+            {
+              path: 'fluttervideo',
+              name: 'fluttervideo',
+              component: Fluttervideo
+            },
+            {
+              path: 'vuevideo',
+              name: 'vuevideo',
+              component: Vuevideo
+            }
+          ]
+        }
+      ]
+    }
+  ]
+})
+```
+::: warning 注意
+二级、三级目录下的path不用写“/”，其中name尽量和path的字段名字值相同。
+:::

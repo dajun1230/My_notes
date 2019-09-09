@@ -1,10 +1,7 @@
 ---
 sidebarDepth: 2
 ---
-# vue-cli 安装
-
-## 介绍
-> Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。
+# vue 环境搭建
 
 ## Vue 2.x 安装
 ``` js
@@ -29,7 +26,6 @@ less安装：
 详细安装步骤：
 
 ### 安装vue-cli
-
 
 安装vue-cli的前提是你已经安装了npm，安装npm你可以直接下载node的安装包进行安装。你可以在命令行工具里输入npm -v 检测你是否安装了npm和版本情况，出现版本号说明你已经安装了npm和node。
 
@@ -125,11 +121,26 @@ vue init webpack vuecli
 ### 介绍
 > CLI (@vue/cli) 是一个全局安装的 npm 包，提供了终端里的 vue 命令。它可以通过 vue create 快速创建一个新项目的脚手架，或者直接通过 vue serve 构建新想法的原型。你也可以通过 vue ui 通过一套图形化界面管理你的所有项目。我们会在接下来的指南中逐章节深入介绍。
 
-###关于旧版本：
-Vue CLI 的包名称由 vue-cli 改成了 @vue/cli。 如果你已经全局安装了旧版本的 vue-cli (1.x 或 2.x)，你需要先通过 npm uninstall vue-cli -g 或 yarn global remove vue-cli 卸载它。
+### 安装@vue/cli
+``` js
+npm install -g @vue/cli
+```
+完成之后，在命令台输入：
+``` js
+vue -V // 查看vue版本号是否为 3.x
+```
+如果出现了版本号，说明已经顺利的把@vue/cli安装到我们的计算机里了。
 
-### 安装介绍
-> 选择方式介绍：
+### 创建项目
+``` js
+vue create vue-demo // vue-demo为项目名称
+```
+然后会出现以下步骤：
+::: tip 提示
+**个人建议采用手动创建，并用cmd命令来创建项目，其中上下键:切换，空格:选择/取消，a:全选/取消全选，i:反选。**
+:::
+
+### 具体步骤
 ``` js
 Please pick a preset: (Use arrow keys)
 > default (babel, eslint) // 包含基本的Babel + ESLint设置的preset。
@@ -146,21 +157,23 @@ Please pick a preset: (Use arrow keys)
   E2E Testing // e2e（end to end） 测试
 
 ```
-### 安装步骤
-::: tip 提示
-**个人建议采用手动创建，并用cmd命令来创建项目，其中上下键:切换，空格:选择/取消，a:全选/取消全选，i:反选。**
-:::
-``` js
-// 具体步骤如下：
-1. npm install -g @vue/cli
-# OR
-yarn global add @vue/cli
-// vue --version 检查其版本是否正确 (3.x)：
-2. vue create vue-demo // vue-demo为文件名
-3. npm run serve // 运行项目
-4. vue add @vue/eslint // 插件添加
-5. vue add axio // 插件添加样例
+
+### Manually（手动安装）介绍
+``` sh
+1. 选择
+# 常用选择
+(*) Babel
+( ) TypeScript
+( ) Progressive Web App <PWA> Support
+(*) Router
+(*) Vuex
+(*) Css Pre-processors
+(*) Linter / Formatter
+( ) Unit Testing
+( ) E2E Testing
 ```
+
+### default（默认安装）介绍
 安装成功之后，其目录结构为： (babel, eslint)安装方式
 ``` js
 |- node_modules
@@ -226,53 +239,57 @@ package.json
 ### 配置修改
 在根目录新建一个vue.config.js，加入以下配置：
 ``` js
-module.exports = {   
-    baseUrl: '/',// 部署应用时的根路径(默认'/'),也可用相对路径(存在使用限制)    
-    outputDir: 'dist',// 运行时生成的生产环境构建文件的目录(默认''dist''，构建之前会被清除)   
-    assetsDir: '',//放置生成的静态资源(s、css、img、fonts)的(相对于 outputDir 的)目录(默认'')    
-    indexPath: 'index.html',//指定生成的 index.html 的输出路径(相对于 outputDir)也可以是一个绝对路径。    
-    pages: {//pages 里配置的路径和文件名在你的文档目录必须存在 否则启动服务会报错        
-    index: {//除了 entry 之外都是可选的            
-    entry: 'src/index/main.js',// page 的入口,每个“page”应该有一个对应的 JavaScript 入口文件            
-    template: 'public/index.html',// 模板来源            
-    filename: 'index.html',// 在 dist/index.html 的输出            
-    title: 'Index Page',// 当使用 title 选项时,在 template 中使用：<title><%= htmlWebpackPlugin.options.title %></title>           
-    chunks: ['chunk-vendors', 'chunk-common', 'index'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk        },        
-    subpage: 'src/subpage/main.js'//官方解释：当使用只有入口的字符串格式时,模板会被推导为'public/subpage.html',若找不到就回退到'public/index.html',输出文件名会被推导为'subpage.html'    },    
-    lintOnSave: true,// 是否在保存的时候检查    
-    productionSourceMap: true,// 生产环境是否生成 sourceMap 文件    
-    css: {        extract: true,// 是否使用css分离插件 ExtractTextPlugin        
-        sourceMap: false,// 开启 CSS source maps        
-        loaderOptions: {
-            // 给 sass-loader 传递选项
-            sass: {
-                // @/ 是 src/ 的别名
-                // 所以这里假设你有 `src/variables.scss` 这个文件
-                data: `@import "@/variables.scss";`
-            }
-        },// css预设器配置项        
-        modules: false// 启用 CSS modules for all css / pre-processor files.    
-    },    
-    devServer: {// 环境配置        
-            host: 'localhost',        
-            port: 8080,        
-            https: false,        
-            hotOnly: false,        
-            open: true, //配置自动启动浏览器        
-            proxy: {// 配置多个代理(配置一个 proxy: 'http://localhost:4000' )            
-                '/api': {                
-                    target: '<url>',                
-                    ws: true,                
-                    changeOrigin: true            
-                },            
-                '/foo': {                
-                target: '<other_url>'            
-                }        
-            }    
-    },    
-    pluginOptions: {// 第三方插件配置        // ...    
-    }
-};
+module.exports = {
+    configureWebpack: { // 为设置断点调试准备
+        devtool: 'source-map'
+    },
+    publicPath: process.env.NODE_ENV === 'production' ? '/' : '/', // 部署应用时的根路径(默认'/'),也可用相对路径(存在使用限制),例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置 publicPath 为 /my-app/。
+    outputDir: 'dist', // 运行时生成的生产环境构建文件的目录(默认''dist''，构建之前会被清除)
+    assetsDir: '', // 放置生成的静态资源(s、css、img、fonts)的(相对于 outputDir 的)目录(默认'')
+    indexPath: 'index.html', // 指定生成的 index.html 的输出路径(相对于 outputDir)也可以是一个绝对路径。
+    pages: { //pages 里配置的路径和文件名在你的文档目录必须存在 否则启动服务会报错
+        index: { //除了 entry 之外都是可选的
+            entry: 'src/main.js', // page 的入口,每个“page”应该有一个对应的 JavaScript 入口文件
+            template: 'public/index.html', // 模板来源
+            filename: 'index.html', // 在 dist/index.html 的输出
+            title: 'Index Page', // 当使用 title 选项时,在 template 中使用：<title><%= htmlWebpackPlugin.options.title %></title>
+            chunks: ['chunk-vendors', 'chunk-common', 'index'] // 在这个页面中包含的块，默认情况下会包含,提取出来的通用 chunk 和 vendor chunk },
+        }
+        // subpage: 'src/subpage/main.js' // 当使用只有入口的字符串格式时，模板会被推导为 `public/subpage.html` 并且如果找不到的话，就回退到 `public/index.html`。输出文件名会被推导为 `subpage.html`。
+    },
+    lintOnSave: true,
+    devServer: {
+        hot: true, // 设置eslint错误得显示为控制台
+        clientLogLevel: 'warning',
+        // overlay: { // 设置eslint错误得显示方式
+        //     warnings: false,
+        //     errors: false
+        // }
+        host: 'localhost',        
+        port: 8000,
+        https: false,
+        hotOnly: false,
+        open: true, //配置自动启动浏览器
+        // proxy: { // 配置多个代理(配置一个 proxy: 'http://localhost:4000' ) }
+        //     '/api': {
+        //         target: '<url>',
+        //         ws: true,
+        //         changeOrigin: true
+        //     },
+        //     '/foo': {
+        //     target: '<other_url>'
+        //     }
+        // }
+    },
+    productionSourceMap: false, // 生产环境是否生成 sourceMap 文件
+    css: { // css预设器配置项
+        extract: true, // 是否使用css分离插件 ExtractTextPlugin
+        sourceMap: false, // 开启 CSS source maps
+        loaderOptions: {}, // 给 sass-loader 传递选项
+        modules: false // 启用 CSS modules for all css / pre-processor files.
+    },
+    pluginOptions: {} // 第三方插件配置
+}
 ```
 ## 拉取 2.x 模板 (旧版本)
 ue CLI >= 3 和旧版使用了相同的 vue 命令，所以 Vue CLI 2 (vue-cli) 被覆盖了。如果你仍然需要使用旧版本的 vue init 功能，你可以全局安装一个桥接工具：
