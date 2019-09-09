@@ -368,3 +368,388 @@ this.props.history.push("/home/");
 就可以顺利实现跳转，这样看起来和上面的过程是一样的。这两种方式的重定向你可以根据真实需求使用，这样能让你的程序更加的灵活。
 
 ## ReactRouter嵌套路由-1
+这也算是一个小实例，在这个过程中我们会复习以前的路由知识，并利用以前的知识构建有些复杂的路由关系。
+
+![An image](./images/Reactrouter_demo.png)
+
+**用脚手架创建项目**
+
+重新创建一个项目Demo02,直接在VSCode里输入，下面的命令初始化项目代码。
+``` js
+create-react-app demo02
+```
+这样项目就创建好了，但是里边有很多暂时不需要的文件，删除这些，让代码结构保持最小化。只留/src目录里的index.js文件，然后再删除一些index.js文件里无用的代码。
+
+项目初始化好以后，再在安装React Router,使用npm来进行安装(安装时记得要进入到Demo02文件夹中)。
+``` js
+npm install --save react-router-dom
+```
+**初始化基本目录**
+根据草图分析，可以指导有两层关系，第一层是大类，第二层是子类别。先再/src目录下建立一个Pages的文件夹。然后在/Pages目录下再建立两个目录/video和/workPlace,然后在/src目录下建立一个AppRouter.js文件作为首页和路由的配置文件。目录结构如下所示:
+``` js
+- src
+|--Pages
+   |--video
+   |--workPlace
+|--index.js
+|--AppRouter.js
+```
+建立完成后，我们先编写AppRouter.js,为的是让程序拥有首页，并让程序可以跑起来。文件新建以后可以用快速生成代码的方式，把基本代码做完。
+``` js
+import React from "react";
+import { BrowserRouter as Router, Route, Link  } from "react-router-dom";
+import Index from './Pages/Index'
+import './index.css'
+
+function AppRouter() {
+    return (
+      <Router>
+          <div className="mainDiv">
+            <div className="leftNav">
+                <h3>一级导航</h3>
+                <ul>
+                    <li> <Link to="/">博客首页</Link> </li>
+                    <li><Link to="">视频教程</Link> </li>
+                    <li><Link to="">职场技能</Link> </li>
+                </ul>
+            </div>
+            
+            <div className="rightMain">
+                <Route path="/"  exact component={Index} />
+            </div>
+          </div>
+      </Router>
+    );
+}
+  
+export default AppRouter;
+```
+写完这个文件，然后修改一下/src/index.js文件，需要引入AppRouter，并进行Render渲染。
+``` js
+import React from 'react'
+import ReactDOM from 'react-dom'
+import AppRouter from './AppRouter'
+ReactDOM.render(<AppRouter />, document.getElementById('root'));
+```
+这时候就可以在终端里输入npm start让程序跑起来，然后去浏览器中进行查看了。
+
+**添加基本样式**
+
+在/src目录下，新建一个index.css文件，然后编写下面的样式。
+``` css
+body{
+    padding: 0px;
+    margin: 0px;
+}
+
+.mainDiv{
+    display: flex;
+    width: 100%;
+}
+.leftNav{
+    width: 16%;
+    background-color: #c0c0c0;
+    color:#333;
+    font-size:24px;
+    height: 1000px;
+    padding: 20px;
+}
+.rightMain{
+    width: 84%;
+    height:1000px;
+    background-color: #fff;
+    font-size:20px;
+    
+}
+```
+写完之后把这个CSS文件引入到AppRouter.js文件中，就可以有一定的样式了。然后再到浏览器中查看一下效果，如果能正常显示，说明到目前为止，我们制作的是正确的。
+
+## 实例-ReactRouter嵌套路由-2
+**编写Video中的子页面**
+
+在编写Video.js页面之前，我们需要在/src/Pages/video下面建立三个子文件，分别是ReactPage.js,Flutter.js和Vue.js，也代表着不同的视频页面。
+
+ReactPage.js组件
+``` js
+import React from "react";
+function Reactpage(){
+    return (<h2>我是React页面</h2>)
+}
+export default Reactpage;
+```
+Flutter.js组件
+``` js
+import React from "react";
+function Flutter(){
+    return (<h2>我是Flutter页面</h2>)
+}
+export default Flutter;
+```
+Vue.js组件
+``` js
+import React from "react";
+function Vue(){
+    return (<h2>我是Vue页面</h2>)
+}
+export default Vue;
+```
+这样就相当于三个页面做好了，当然咱们作的是非常简单的。
+
+**编写Video.js页面**
+这个页面就是二级导航的编写，这个的编写也是课程的重点。
+``` js
+import React from "react";
+import {  Route, Link  } from "react-router-dom";
+import Reactpage from './video/ReactPage'
+import Vue from './video/Vue'
+import Flutter from './video/Flutter'
+function Video(){
+    return (
+        <div>
+            <div className="topNav">
+                <ul>
+                    <li><Link to="/video/reactpage">React教程</Link></li>
+                    <li><Link to="/video/vue">Vue教程</Link></li>
+                    <li><Link to="/video/flutter">Flutter教程</Link></li>
+                </ul>
+            </div>
+            <div className="videoContent">
+                <div><h3>视频教程</h3></div>
+                <Route path="/video/reactpage/"   component={Reactpage} />
+                <Route path="/video/vue/"   component={Vue} />
+                <Route path="/video/flutter/"   component={Flutter} />
+            </div>
+        </div>
+    )
+}
+export default Video;
+```
+**修改AppRouter.js文件**
+当我们的Video组件制作完成后，可以把它引入到AppRouter.js文件中，然后配置对应的路由。为了方便你的学习，这里给出了全部代码，并在重用修改的地方给予标注。
+``` js
+import React from "react";
+import { BrowserRouter as Router, Route, Link  } from "react-router-dom";
+import Index from './Pages/Index'
+//--关键代码------------start
+import Video from './Pages/Video'
+//--关键代码------------end
+import './index.css'
+
+function AppRouter() {
+    return (
+      <Router>
+          <div className="mainDiv">
+            <div className="leftNav">
+                <h3>一级导航</h3>
+                <ul>
+                    <li> <Link to="/">博客首页</Link> </li>
+                    {/*--关键代码------------start*/}
+                    <li><Link to="/video/">视频教程</Link> </li>
+                    {/*--关键代码------------end*/}
+                    <li><Link to="">职场技能</Link> </li>
+                </ul>
+            </div>
+            
+            <div className="rightMain">
+                <Route path="/"  exact component={Index} />
+                 {/*--关键代码------------start*/}
+                <Route path="/video/"   component={Video} />
+                 {/*--关键代码------------end*/}
+            </div>
+          </div>
+      </Router>
+    );
+}
+  
+export default AppRouter;
+```
+这时候就可以到浏览器中看看效果了，当然目前还没有CSS样式，所以不是很好看。
+``` css
+.topNav{
+    height:50px ;
+    background-color: #cfdefd;
+}
+.topNav ul{
+   display: flex; 
+   margin: 0px;
+   padding: 0px;
+}
+.topNav li{
+   padding: 10px;
+   text-align: center;
+   list-style: none;
+ }
+ .videoContent{
+     padding:20px;
+ }
+```
+这样我们就实现了React Router的路由嵌套功能，看起来还是非常简单的。
+
+## 实例-ReactRouter嵌套路由-3
+**编写第三级子页面**
+在"职场技能"里只作两个子页面，"程序员加薪秘籍"和"程序员早起攻略"。在/src/Pages/workPlace目录下，新建两个文件Money.js和Getup.js，然后编写代码。
+
+Money.js
+``` js
+import React from "react";
+function Money(){
+    return (<h2>程序员加薪秘籍详情</h2>)
+}
+export default Money;
+```
+Getup.js
+``` js
+import React from "react";
+function Getup(){
+    return (<h2>程序员早起攻略详情</h2>)
+}
+export default Getup;
+```
+#编写二级子页面Workplace
+在/src/Pages文件夹下建立一个Workplace.js页面，作为二级子页面。
+``` js
+import React from "react";
+import {  Route, Link  } from "react-router-dom";
+import Money from './workPlace/Money'
+import Getup from './workPlace/Getup'
+function WorkPlace(){
+    return (
+        <div>
+            <div className="topNav">
+                <ul>
+                    <li><Link to="/workplace/Moeny">程序员加薪秘籍</Link></li>
+                    <li><Link to="/workplace/Getup">程序员早起攻略</Link></li>
+                   
+                </ul>
+            </div>
+            <div className="videoContent">
+                <div><h3>职场软技能</h3></div>
+                <Route path="/workplace/Moeny/"   component={Money} />
+                <Route path="/workplace/Getup/"   component={Getup} />
+               
+            </div>
+        </div>
+    )
+}
+export default WorkPlace;
+```
+这个组件完成后，可以进入主路由里把二级页面配置一下。
+
+**配置主路由AppRouter.js**
+这个我就直接给出文件代码了，思路是先引入要配置的路由Workplace,然后配置路由Route,最后编写链接Link。
+``` js
+import React from "react";
+import { BrowserRouter as Router, Route, Link  } from "react-router-dom";
+import Index from './Pages/Index'
+import Video from './Pages/Video'
+import Workplace from './Pages/Workplace'
+import './index.css'
+
+function AppRouter() {
+    return (
+      <Router>
+          <div className="mainDiv">
+            <div className="leftNav">
+                <h3>一级导航</h3>
+                <ul>
+                    <li> <Link to="/">博客首页</Link> </li>
+                    <li><Link to="/video/">视频教程</Link> </li>
+                    <li><Link to="/workplace">职场技能</Link> </li>
+                </ul>
+            </div>
+            
+            <div className="rightMain">
+                <Route path="/"  exact component={Index} />
+                <Route path="/video/"   component={Video} />
+                <Route path="/workplace/"   component={Workplace} />
+            </div>
+          </div>
+      </Router>
+    );
+}
+  
+  
+export default AppRouter;
+```  
+完成后，就可以再浏览器长查看一下效果，可以正常显示就说明一切正常，我们这个小案例也就算完成了。
+
+## 后台动态获取路由进行配置
+**模拟后台得到的JSON数据**
+
+我们现在AppRouter.js文件里，模拟从后台得到了JSON字符串，并转换为了对象（我们只是模拟，就不真的去远端请求数据了）。模拟的代码如下:
+``` js
+let routeConfig =[
+    {path:'/',title:'博客首页',exact:true,component:Index},
+    {path:'/video/',title:'视频教程',exact:false,component:Video},
+    {path:'/workplace/',title:'职场技能',exact:false,component:Workplace}
+]
+```
+**循环出Link区域**
+这时候一级导航就不能是写死了，需要根据得到的数据进行循环出来。直接使用map循环就可以。代码如下：
+``` js
+<ul>
+    {
+        routeConfig.map((item,index)=>{
+            return (<li key={index}> <Link to={item.path}>{item.title}</Link> </li>)
+        })
+    }
+</ul>
+``` 
+这时候就可以把所有的Link标签都循环出来了。
+
+**循环出路由配置**
+
+按照上面的逻辑把Route的配置循环出来。代码如下:
+``` js
+{
+    routeConfig.map((item,index)=>{
+        return (<Route key={index} exact={item.exact} path={item.path}  component={item.component} />)
+    })
+}
+```
+为了方便你学习，这里给出AppRouter.js的全部代码。
+``` js
+import React from "react";
+import { BrowserRouter as Router, Route, Link  } from "react-router-dom";
+import Index from './Pages/Index'
+import Video from './Pages/Video'
+import Workplace from './Pages/Workplace'
+import './index.css'
+
+function AppRouter() {
+    let routeConfig =[
+      {path:'/',title:'博客首页',exact:true,component:Index},
+      {path:'/video/',title:'视频教程',exact:false,component:Video},
+      {path:'/workplace/',title:'职场技能',exact:false,component:Workplace}
+    ]
+    return (
+      <Router>
+          <div className="mainDiv">
+            <div className="leftNav">
+                <h3>一级导航</h3>
+                <ul>
+                    {
+                      routeConfig.map((item,index)=>{
+                          return (<li key={index}> <Link to={item.path}>{item.title}</Link> </li>)
+                      })
+                    }
+                </ul>
+            </div>
+            
+            <div className="rightMain">
+                    {
+                      routeConfig.map((item,index)=>{
+                          return (<Route key={index} exact={item.exact} path={item.path}  component={item.component} />)
+                      })
+                    }
+                
+            </div>
+          </div>
+      </Router>
+    );
+}
+  
+  
+export default AppRouter;
+```
+  到这里就可以实现动态显示路由了，并且可以后台进行配置了，但是这应该都是架构层考虑的东西了。如果你刚接触React，可能这种用法的不多。但是你可以利用这模式来设计你静态的路由，增加你程序的扩展性。
