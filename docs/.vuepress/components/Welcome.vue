@@ -34,6 +34,14 @@
                         </button>
                     </a>
                 </div>
+                <div class="buttons">
+                    <a href="/typescript/">
+                        <button type="button" class="button" role="button">
+                            TypeScript
+                            <div class="right-icon"></div>
+                        </button>
+                    </a>
+                </div>
                 <div class="gitContainer"></div>
             </div>
         </div>

@@ -11,7 +11,11 @@ module.exports = {
       }]
     ],
     themeConfig : {
-      nav : [{
+      nav : [
+        {
+          text: '首页',
+          link: '/'
+        }, {
         text: 'Vue',
         link: '/vue/'
         }, {
@@ -90,6 +94,14 @@ module.exports = {
             'es6', // ES6
             'dva', // dva开发
             'wepy' // wepy 小程序开发
+          ]
+        }],
+        '/typescript/': [{
+          title: 'TypeScript',
+          collapsable: false,
+          children: [
+            'install', // typescript 安装
+            'basic' // 基础
           ]
         }]
       }
