@@ -63,13 +63,107 @@ npm start
 6.按“F5”键启动调试，会重新打开一个新窗口，同时Vs Code中代码执行到断点处则会暂停，也可打开开发者工具查看"Sources"输出结果情况
 7. shift + F5 关闭调试
 
+## 传递参数的几种方式
+### 通过path+query传递参数
+一级页面("/home")通过点击执行函数getDetail执行跳转，并传递参数id，代码如下：
+``` js
+<script>
+export default {
+  name: 'home',
+  methods: {
+    goDetail(id) {
+      this.$router.push({ path: "/home/detail", query: { detailId: id }});
+    }
+  }
+}
+</script>
+```
+二级页面（"/home/detail"）通过this.$route.query进行获取参数，代码如下：
+``` js
+<script>
+export default {
+  name: 'detail',
+  created() {
+    let id = this.$route.query.id;
+  }
+}
+</script>
+```
+此时传递的参数会在url中体现出来，地址栏代码（"/home/detail?id=xxx"），当页面刷新时，数据不会丢失。
+### 通过name+params传递参数
+一级页面("/home")通过点击执行函数getDetail执行跳转，并传递参数id，代码如下：
+``` js
+<script>
+export default {
+  name: 'home',
+  methods: {
+    goDetail(id) {
+      this.$router.push({ name: "/home/detail", path: { detailId: id }});
+    }
+  }
+}
+</script>
+```
+二级页面（"/home/detail"）通过this.$route.params进行获取参数，代码如下：
+``` js
+<script>
+export default {
+  name: 'detail',
+  created() {
+    let id = this.$route.params.id;
+  }
+}
+</script>
+```
+此时传递的参数会在url中体现出来，地址栏代码（"/home/detail?id=xxx"），当页面刷新时，数据会丢失。
+::: danger 注意
+切记不能将name + query或者path + params混合写，否则会报错。
+两者的区别在于，name是隐式传递，页面刷新，传递的数据同时会丢失；path是显示传递，通过地址栏显现出来，页面刷新，传递的数据依旧存在。
+:::
+
+### 通过路由传递参数
+一级页面("/home")通过点击执行函数getDetail执行跳转，并传递参数id，代码如下：
+``` js
+<script>
+export default {
+  name: 'home',
+  methods: {
+    goDetail(id) {
+      this.$router.push(`/home/detail/${id}`});
+    }
+  }
+}
+</script>
+```
+二级页面（"/home/detail"）需要在路由中配置，代码如下：
+``` js
+{
+  path: "/home/detail/:id",
+  component: Detail
+}
+```
+然后在二级页面中通过this.$route.params来获取，此时地址栏为（"/home/detail/xxx"），并且页面刷新传值还在，具体代码如下：
+``` js
+<script>
+export default {
+  name: 'detail',
+  created() {
+    let id = this.$route.params.id;
+  }
+}
+</script>
+```
+
 ## 父子组件间传值
-1. 父组件向子组件
+### 父组件向子组件传递参数
 > 父组件
 ``` js
 <template>
     <div class="parent">
-        <children v-bind:message="parentMsg"></children>
+        <children
+          v-bind:message="parentMsg"
+          :currentPage="currentPage"
+        />
     </div>
 </template>
 
@@ -82,7 +176,8 @@ export default {
     },
     data () {
         return {
-            parentMsg: 'hell wordld ！'
+            parentMsg: 'hell wordld ！',
+            currentPage: 5
         }
     }
 }
@@ -95,14 +190,28 @@ export default {
 ``` js
 <template>
     <div class="children">
-        <p>{{message}}</p>
+    // 直接通过调用可显示
+        <p>{{ message }}</p>
+        // 不建议直接使用<div>{{ currentPage }}</div>，而是采用如下方式
+        <div>{{ current }}</div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'Children',
-    props: ["message"]
+    props: { // props中只需要书写传递的参数，方法是不能写里面
+      message: String,
+      currentPage: Number // 注意：如果currentPage频繁变动，则不建议直接渲染到页面上
+    },
+    data() {
+      return {
+        current: this.currentPage // 通过data中转一次显示在页面上，更符合条理性
+      };
+    },
+    created() {
+      console.log(this.message); // 可直接通过this.获取对应数据
+    }
 }
 </script>
 
@@ -110,7 +219,7 @@ export default {
 </style>
 ```
 
-2. 子组件向父组件传值
+### 子组件向父组件传递方法及参数
 > 子组件
 ``` js
 <template>
@@ -130,8 +239,9 @@ export default {
       }
     },
     methods: {
-      sendMsgToParent () {
+      sendMsgToParent (page) {
         this.$emit('listenToChildEvent', this.msg);
+        this.$emit("changgePage", page);
       }
     }
 }
@@ -144,7 +254,10 @@ export default {
 ``` js
 <template>
     <div class="parent">
-        <children v-on:listenToChildEvent="showMsgFromChild"></children>
+        <children 
+          v-on:listenToChildEvent="showMsgFromChild"
+          @:changgePage="handlePage"
+        />
     </div>
 </template>
 
@@ -163,6 +276,9 @@ export default {
     methods: {
       showMsgFromChild (data) {
         console.log(data);
+      },
+      handlePage(page) {
+        console.log(page);
       }
     }
 }
