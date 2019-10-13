@@ -335,3 +335,237 @@ withRouter是Next.js框架的高级组件，用来处理路由用的，这里先
 <Link href={{pathname:'/demoA',query: {id: '789'}}}><a>demoA页面</a></Link><br/>
 ```
 在浏览器中预览一下，如果一切正常是可以顺利进行跳转，并接收到传递的值。这次主要讲解了Next框架的路由跳转时带参数过去，然后用withRouter进行接收。
+
+## 路由-六个钩子事件的讲解
+### routerChangeStart路由发生变化时
+在监听路由发生变化时，我们需要用Router组件，然后用on方法来进行监听,在pages文件夹下的index.js，然后写入下面的监听事件，这里我们只打印一句话，就不作其他的事情了。代码如下：
+``` js
+Router.events.on('routeChangeStart',(...args)=>{
+  console.log('1.routeChangeStart->路由开始变化,参数为:',...args)
+})
+```
+这个时路由发生变化时，时间第一时间被监听到，并执行了里边的方法。
+
+### routerChangeComplete路由结束变化时
+路由变化开始时可以监听到，那结束时也时可以监听到的，这时候监听的事件是routerChangeComplete。
+``` js
+Router.events.on('routeChangeComplete',(...args)=>{
+  console.log('routeChangeComplete->路由结束变化,参数为:',...args)
+})
+```
+### beforeHistoryChange浏览器history触发前
+history就是HTML中的API，如果这个不了解可以百度了解一下，Next.js路由变化默认都是通过history进行的，所以每次都会调用。 不适用history的话，也可以通过hash
+``` js
+Router.events.on('beforeHistoryChange',(...args)=>{
+  console.log('3,beforeHistoryChange->在改变浏览器 history之前触发,参数为:',...args)
+})
+```
+### routeChangeError路由跳转发生错误时
+Router.events.on('routeChangeError',(...args)=>{
+  console.log('4,routeChangeError->跳转发生错误,参数为:',...args)
+})
+需要注意的是404找不到路由页面不算错误，这个我们就不演示了。
+
+### 转变成hash路由模式
+还有两种事件，都是针对hash的，所以现在要转变成hash模式。hash模式下的两个事件hashChangeStart和hashChangeComplete,就都在这里进行编写了。
+``` js
+Router.events.on('hashChangeStart',(...args)=>{
+  console.log('5,hashChangeStart->hash跳转开始时执行,参数为:',...args)
+})
+
+Router.events.on('hashChangeComplete',(...args)=>{
+  console.log('6,hashChangeComplete->hash跳转完成时,参数为:',...args)
+})
+```
+在下面的jsx语法部分，再增加一个链接,使用hash来进行跳转，代码如下：
+``` js
+<div>
+  <Link href="#demo"><a>Demo</a></Link>
+</div>
+```
+我这里给出index.js的全部代码，你可以在练习时进行参考。
+``` js
+import React from 'react';
+import Link from 'next/link'
+import Router from "next/router";
+
+const Home = () => (
+  <>
+    <div>
+      <h2>首页</h2>
+      <div><Link href="/demoA?id=123"><a>demoA页面</a></Link></div>
+      <div>
+        <Link href="/demoB">
+          <a>demoB页面</a>
+        </Link></div>
+      <div>
+        <p onClick={()=> {Router.push('/demoA?id=678')}}>去demoA页面</p>
+      </div>
+      <div>
+        <Link href="#demo"><a>Demo</a></Link>
+      </div>
+    </div>
+  </>
+)
+
+Router.events.on("routeChangeStart", (...args) => {
+  console.log('1.routeChangeStart:'+args);
+});
+
+Router.events.on("routeChangeComplete", (...args) => {
+  console.log('2.routeChangeComplete:'+args);
+});
+
+Router.events.on('beforeHistoryChange',(...args)=>{
+  console.log('3,beforeHistoryChange->在改变浏览器 history之前触发,参数为:',...args)
+});
+
+Router.events.on('routeChangeError',(...args)=>{
+  console.log('4,routeChangeError->跳转发生错误,参数为:',...args)
+});
+
+Router.events.on('hashChangeStart',(...args)=>{
+  console.log('5,hashChangeStart->hash跳转开始时执行,参数为:',...args)
+});
+
+Router.events.on('hashChangeComplete',(...args)=>{
+  console.log('6,hashChangeComplete->hash跳转完成时,参数为:',...args)
+});
+
+export default Home;
+```
+
+## 在getInitialProps中用Axios获取远端数据
+在Next.js框架中提供了getInitialProps静态方法用来获取远端数据，这个是框架的约定，所以你也只能在这个方法里获取远端数据。不要再试图在声明周期里获得，虽然也可以在ComponentDidMount中获得，但是用了别人的框架，就要遵守别人的约定。
+
+### 安装和引入Axios插件
+打开终端，直接使用yarn命令进行安装。
+``` js
+yarn add axios
+```
+我使用的版本是0.19.0,可能你学习的时候会稍有变化。安装完成后，在需要的页面中用import引入axios，代码如下：
+``` js
+import axios from 'axios';
+```
+引入后，就可以使用getInitialProps进行获取后端接口数据了。
+
+### getInitialProps中获取数据
+demoA.js页面中使用getInitialProps，因为是远程获取数据，所以我们采用异步请求的方式。
+``` js
+demoA.gitInitialProps = async () => {
+    const promise = new Promise((resolve) => {
+        axios("http:xxx").then(res => {
+            console.log(res);
+            resolve(res.data.data); // 数据格式为list：{};所有上面用list来显示
+        })
+    })
+    return await promise;
+}
+```
+获得数据后，我们需要把得到的数据传递给页面组件，用{}显示出来就可以了。
+``` js
+import {withRouter} from "next/router";
+import Link from "next/link";
+import axios from "axios";
+
+function demoA({router}) {
+    return (
+        <div>
+            <h2>这是demoA-页面</h2>
+            <p>已接收到参数：{router.query.id}</p>
+            <Link href="/"><a>返回首页</a></Link>
+            <div>远程接收的参数显示： {list}</div>
+        </div>
+    )
+}
+
+demoA.gitInitialProps = async () => {
+    const promise = new Promise((resolve) => {
+        axios("http:xxx").then(res => {
+            console.log(res);
+            resolve(res.data.data); // 数据格式为list：{};所有上面用list来显示
+        })
+    })
+    return await promise;
+}
+
+export default withRouter(demoA);
+```
+::: warning 注意
+在Next.js框架中**只能**用getInitialProps静态方法用来获取远端数据。
+:::
+
+## 使用Style JSX编写页面的CSS样式
+在Next.js中引入一个CSS样式是不可以用的，如果想用，需要作额外的配置。因为框架为我们提供了一个style jsx特性，也就是把CSS用JSX的语法写出来。
+
+### 初识Style JSX语法 把字体设成蓝色
+在pages文件夹下，新建一个demo3.js文件。然后写入下面的代码：
+``` js
+//demo3.js
+function demo3(){
+    return (
+        <>
+            <div>demo3页面</div>
+        </>
+    )
+}
+export default demo3;
+```
+这个是一个最简单的页面，只在层中写了一句话。这时候我们想把页面中字的颜色变成蓝色，就可以使用Style JSX语法。直接在<></>之间写下如下的代码:
+``` js
+<style jsx>
+  {`
+      div{color:blue;}
+  `}
+</style>
+```
+主要所有的css样式需要用{}进行包裹，否则就会报错。这时候你打开浏览器进行预览，字体的颜色就变成了蓝色。
+
+### 自动加随机类名 不会污染全局CSS
+加入了Style jsx代码后，Next.js会自动加入一个随机类名，这样就防止了CSS的全局污染。比如我们把代码写成下面这样，然后在浏览器的控制台中进行查看，你会发现自动给我们加入了类名，类似jsx-xxxxxxxx。
+``` js
+function demo3(){
+    return (
+        <>
+            <div>demo3页面</div>
+            <div className="text">用JSX来渲染css</div>
+           
+            <style jsx>
+                {`
+                    div { color:blue;}
+                    .text {color:red;}
+                `}
+            </style>
+        </>
+    )
+}
+export default demo3;
+```
+### 动态显示样式
+Next.js使用了Style jsx,所以定义动态的CSS样式就非常简单，比如现在要作一个按钮，点击一下，字体颜色就由蓝色变成了红色。下面是实现代码。
+``` js
+import React, {useState} from 'react';
+
+function demo3(){
+    //关键代码----------start-------
+    const [color,setColor] = useState('blue')
+
+    const changeColor = () =>{
+        setColor(color=='blue'?'red':'blue')
+    }
+     //关键代码----------end-------
+    return (
+        <>
+            <div>demo3页面</div>
+            <div><button onClick={changeColor}>改变颜色</button></div>
+            <style jsx>
+                {`
+                    div { color: ${color};}
+                `}
+            </style>
+        </>
+    )
+}
+export default demo3;
+```
+这样就完成了CSS的动态显示，是不是非常容易。
