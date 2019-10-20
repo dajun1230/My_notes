@@ -40,6 +40,7 @@ module.exports = {
               title: 'Vue',
               collapsable: false,
               children: [
+                'unknown', // vue官网中你不知道的
                 'vue2x-1', // vue基础1
                 'vue2x-2',  // vue基础2
                 'install',  // vue2.0 3.0环境搭建

@@ -569,3 +569,284 @@ function demo3(){
 export default demo3;
 ```
 这样就完成了CSS的动态显示，是不是非常容易。
+
+## Lazy Loading实现模块懒加载
+当项目越来越大的时候，模块的加载是需要管理的，如果不管理会出现首次打开过慢，页面长时间没有反应一系列问题。这时候可用Next.js提供的LazyLoading来解决这类问题。让模块和组件只有在用到的时候在进行加载，一般我把这种东西叫做“懒加载”.它一般分为两种情况，一种是懒加载（或者说是异步加载）模块，另一种是异步加载组件。
+
+### 懒加载模块
+这里使用一个在开发中常用的模块Moment.js，它是一个JavaScript日期处理类库，使用前需要先进行安装，这里使用yarn来进行安装。
+``` js
+yarn add momnet
+```
+然后在pages文件夹下，新建立一个time.js文件，并使用刚才的moment库来格式化时间，代码如下:
+``` js
+import React, {useState} from 'react';
+import moment from 'moment'; // 引入moment
+
+function Time(){
+    const [nowTime,setTime] = useState(Date.now());
+    const changeTime=()=>{
+        setTime(moment(Date.now()).format());
+    }
+    return (
+        <>
+            <div>显示时间为:{nowTime}</div>
+            <div><button onClick={changeTime}>改变时间格式</button></div>
+        </>
+    )
+}
+export default Time;
+```
+这个看起来很简单和清晰的案例，缺存在着一个潜在的风险，就是如何有半数以上页面使用了这个momnet的库，那它就会以公共库的形式进行打包发布，**就算项目第一个页面不使用moment也会进行加载，这就是资源浪费**，对于我这样有代码洁癖的良好程序员是绝对不允许的。下面我们就通过Lazy Loading来进行改造代码。
+``` js
+import React, {useState} from 'react';
+//删除import moment
+function Time(){
+    const [nowTime,setTime] = useState(Date.now());
+    const changeTime= async ()=>{ // 把方法变成异步模式
+        const moment = await import('moment'); // 等待moment加载完成
+        setTime(moment.default(Date.now()).format()); // 注意使用defalut
+    }
+    return (
+        <>
+            <div>显示时间为:{nowTime}</div>
+            <div><button onClick={changeTime}>改变时间格式</button></div>
+        </>
+    )
+}
+export default Time;
+```
+这时候就就是懒加载了，可以在浏览器中按F12，看一下Network标签，当我们点击按钮时，才会加载1.js,它就是momnet.js的内容。
+
+### 懒加载自定义组件
+懒加载组件也是非常容易的，我们先来写一个最简单的组件，在components文件夹下建立一个one.js文件，然后编写如下代码：
+``` js
+export default ()=><div>Lazy Loading Component</div>
+```
+有了自定义组件后，先要在懒加载这个组件的文件中引入dynamic,我们这个就在上边新建的time.js文件中编写了。
+``` js
+import dynamic from 'next/dynamic';
+```
+引入后就可以懒加载自定义模块了，代码如下：
+``` js
+import React, {useState} from 'react';
+import dynamic from 'next/dynamic';
+
+const One = dynamic(import('../components/one'));
+
+function Time(){
+    const [nowTime,setTime] = useState(Date.now());
+    const changeTime= async ()=>{
+        const moment = await import('moment');
+        setTime(moment.default(Date.now()).format());
+    }
+    return (
+        <>
+            <div>显示时间为:{nowTime}</div>
+            <One />
+            <div><button onClick={changeTime}>改变时间格式</button></div>
+        </>
+    )
+}
+export default Time;
+```
+写完代码后，可以看到自定义组件是懒加载的，当我们作的应用存在首页打开过慢和某个页面加载过慢时，就可以采用Lazy Loading的形式，用懒加载解决这些问题。
+
+## 自定义Head 更加友好的SEO操作
+既然用了Next.js框架，你就是希望服务端渲染，进行SEO操作。那为了更好的进行SEO优化，可以自己定制Head标签，定义Head一般有两种方式。
+
+### 方法1：在各个页面加上Head标签
+先在/pages文件夹下面建立一个header.js文件，然后写一个最简单的Hooks页面，代码如下:
+``` js
+function Header(){ 
+    return (<div>学习next中Head标签</div>)
+}
+export default Header;
+```
+写完后到浏览器中预览一下（右键-查看网页源代码），可以发现title部分并没有任何内容，显示的是localhost:3000/header,接下来就自定义下Head。自定义需要先进行引入next/head。
+``` js
+import Head from 'next/head';
+```
+引入后你就可以写一些列的头部标签了，全部代码如下:
+``` js
+import Head from 'next/head'
+function Header(){ 
+    return (
+        <>
+            <Head>
+                <title>Head标签</title>
+                <meta charSet='utf-8' />
+            </Head>
+            <div>学习next中Head标签</div>
+    
+        </> 
+    )
+}
+export default Header;
+```
+这时候再打开浏览器预览，你发现已经有了title。
+
+### 方法2：定义全局的Head
+这种方法相当于自定义了一个组件，然后把Head在组件里定义好，以后每个页面都使用这个组件,其实这种方法用处不大，也不灵活。因为Next.js已经把Head封装好了，本身就是一个组件，我们再次封装的意义不大。
+
+比如在components文件夹下面新建立一个myheader.js,然后写入下面的代码:
+``` js
+import Head from 'next/head';
+
+const MyHeader = ()=>{
+    return (
+        <>
+            <Head>
+                <title>Head标签</title>   
+            </Head>
+        </>
+    )
+}
+
+export default MyHeader;
+```
+这时候把刚才编写的header.js页面改写一下，引入自定义的myheader，在页面里进行使用，最后在浏览器中预览，也是可以得到title的。
+``` js
+import Myheader from '../components/myheader'
+function Header(){ 
+    return (
+        <>
+            <Myheader />
+            <div>学习next中Head标签</div>
+        </> 
+    )
+}
+export default Header;
+```
+
+## Next.js框架下使用Ant Design UI
+让Next.js支持CSS文件
+在前面的课程中我讲过Next.js默认是不支持CSS文件的，它用的是style jsx，也就是说它是不支持直接用import进行引入css的。
+
+比如在根目录下新建一个文件夹static（其实正常情况下你应该已经有这个文件了），然后在文件夹下建立一个test.css文件，写入一些CSS Style。
+``` css
+body {
+  color:green;
+}
+```
+然后用import在header.js里引入。
+``` js
+import '../static/test.css';
+```
+写完这些后到浏览器中进行预览，没有任何输出结果而且报错了。这说明Next.js默认是不支持CSS样式引入的，要进行一些必要的设置，才可以完成。
+
+开始进行配置，让Next.js支持CSS文件
+
+先用yarn命令来安装@zeit/next-css包，它的主要功能就是让Next.js可以加载CSS文件，有了这个包才可以进行配置。
+``` js
+yarn add @zeit/next-css
+```
+包安装好以后就可以进行配置文件的编写了，建立一个next.config.js.这个就是Next.js的总配置文件（如果感兴趣可以自学一下）。
+``` js
+const withCss = require('@zeit/next-css')
+
+if(typeof require !== 'undefined'){
+    require.extensions['.css']=file=>{}
+}
+
+module.exports = withCss({})
+```
+这段代码你有兴趣是可以看看的，其实我对配置文件基本不记忆的，因为配置文件就是别人规定的配置，你写就好。比如要使用CSS就可以把上面这段代码输入到放入到里边的就好了。
+
+修改配置文件需要重新启一下服务，重启服务可以让配置生效，这时候你到浏览器中可以发现CSS文件已经生效了，字变成了绿色。
+
+### 按需加载Ant Design
+加载Ant Design在我们打包的时候会把Ant Design的所有包都打包进来，这样就会产生性能问题，让项目加载变的非常慢。这肯定是不行的，现在的目的是只加载项目中用到的模块，这就需要我们用到一个babel-plugin-import文件。
+
+**先来安装Ant Design库**
+
+直接使用yarn来安装就可以。
+``` js
+yarn add antd
+```
+**安装和配置babel-plugin-import插件**
+
+其实babel-plugin-import我讲Vue.js和Webpack.js的时候都一次讲过这个插件，这里我们就再来讲一下，先进行安装。
+``` js
+yarn add babel-plugin-import
+```
+安装完成后，在项目根目录建立.babelrc文件，然后写入如下配置文件。
+``` js
+{
+    "presets":["next/babel"],  //Next.js的总配置文件，相当于继承了它本身的所有配置
+    "plugins":[     //增加新的插件，这个插件就是让antd可以按需引入，包括CSS
+        [
+            "import",
+            {
+                "libraryName":"antd",
+                "style":"css"
+            }
+        ]
+    ]
+}
+```
+这样配置好了以后，webpack就不会默认把整个Ant Design的包都进行打包到生产环境了，而是我们使用那个组件就打包那个组件,同样CSS也是按需打包的。
+
+通过上面的配置，就可以愉快的在Next.js中使用Ant Desgin，让页面变的好看起来。
+
+可以在header.js里，引入Button组件，并进行使用，代码如下。
+``` js
+import Myheader from '../components/myheader';
+import {Button} from 'antd';
+
+
+import '../static/test.css'
+function Header(){ 
+    return (
+        <>
+            <Myheader />
+            <div>Header页面</div>
+            <div><Button>我是按钮</Button></div>
+    
+        </> 
+    )
+}
+export default Header;
+```
+然后到浏览器中查看一下结果，这时候Ant Design已经起作用了，我们也完成了在Next.js中，使用Ant Design的目的。
+
+## Next.js生产环境打包
+其实Next.js大打包时非常简单的，只要一个命令就可以打包成功。但是当你使用了Ant Desgin后，在打包的时候会遇到一些坑。
+``` sh
+打包 ：next build
+运行：next start -p 80
+```
+先把这两个命令配置到package.json文件里，比如配置成下面的样子。
+``` js
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start -p 80"
+},
+```
+然后在终端里运行一下yarn build，如果这时候报错，其实是我们在加入Ant Design的样式时产生的，这个已经在Ant Design的Github上被提出了，但目前还没有被修改，你可以改完全局引入CSS解决问题。
+
+在page目录下，新建一个_app.js文件，然后写入下面的代码。
+``` js
+import App from 'next/app';
+
+import 'antd/dist/antd.css';
+
+export default App;
+```
+同时将.babelrc文件中的引入样式去掉，如：
+``` js
+{
+    "presets":["next/babel"],  //Next.js的总配置文件，相当于继承了它本身的所有配置
+    "plugins":[     //增加新的插件，这个插件就是让antd可以按需引入，包括CSS
+        [
+            "import",
+            {
+                "libraryName":"antd"
+                // "style":"css" // 注释，或者直接删除掉
+            }
+        ]
+    ]
+}
+```
+这样配置一下，就可以打包成功了，然后再运行yarn start来运行服务器，看一下我们的header页面，也是有样式的。说明打包已经成功了。
