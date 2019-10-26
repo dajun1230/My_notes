@@ -47,7 +47,8 @@ module.exports = {
                 'vuex', // vuex
                 'basic', // vue基本写法
                 'important', // vue
-                'mpvue' // mpvue 微信小程序
+                'mpvue', // mpvue 微信小程序
+                'nuxt' // nuxt，基于vue的服务端渲染框架
               ]
             }
           ],
@@ -58,7 +59,8 @@ module.exports = {
               'react',
               'install', // 安装
               'base', // 基础
-              'learn', // 学习
+              'rhooks', // React Hooks学习
+              'next', // next，基于react的服务端渲染框架
               'demo', // 案例
               'rnative'
             ]
@@ -101,7 +103,8 @@ module.exports = {
           collapsable: false,
           children: [
             'install', // typescript 安装
-            'basic' // 基础
+            'basic', // 基础
+            'vts' // Ts在vue中的应用
           ]
         }]
       }

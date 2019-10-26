@@ -1,5 +1,10 @@
 # Git
 
+查看全局安装命令：
+``` js
+npm list -g --depth=0
+```
+
 ## Git下载
 [Git 官网](https://git-scm.com/)
 
