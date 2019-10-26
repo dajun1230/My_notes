@@ -311,7 +311,7 @@ export default withRouter(demoA);
 withRouter是Next.js框架的高级组件，用来处理路由用的，这里先学简单用法，以后还会学习的。通过这种方式就获得了参数，并显示在页面上了。
 
 ### 编程式跳转传递参数
-回了<Link>这种标签式跳转传递参数的形式，那编程式跳转如何传递那，其实也可以简单使用?加参数的形式，代码如下：
+回了Link这种标签式跳转传递参数的形式，那编程式跳转如何传递那，其实也可以简单使用?加参数的形式，代码如下：
 ``` js
 <div>
   <p onClick={()=> {Router.push('/demoA?id=678')}}>去demoA页面</p>
@@ -335,3 +335,518 @@ withRouter是Next.js框架的高级组件，用来处理路由用的，这里先
 <Link href={{pathname:'/demoA',query: {id: '789'}}}><a>demoA页面</a></Link><br/>
 ```
 在浏览器中预览一下，如果一切正常是可以顺利进行跳转，并接收到传递的值。这次主要讲解了Next框架的路由跳转时带参数过去，然后用withRouter进行接收。
+
+## 路由-六个钩子事件的讲解
+### routerChangeStart路由发生变化时
+在监听路由发生变化时，我们需要用Router组件，然后用on方法来进行监听,在pages文件夹下的index.js，然后写入下面的监听事件，这里我们只打印一句话，就不作其他的事情了。代码如下：
+``` js
+Router.events.on('routeChangeStart',(...args)=>{
+  console.log('1.routeChangeStart->路由开始变化,参数为:',...args)
+})
+```
+这个时路由发生变化时，时间第一时间被监听到，并执行了里边的方法。
+
+### routerChangeComplete路由结束变化时
+路由变化开始时可以监听到，那结束时也时可以监听到的，这时候监听的事件是routerChangeComplete。
+``` js
+Router.events.on('routeChangeComplete',(...args)=>{
+  console.log('routeChangeComplete->路由结束变化,参数为:',...args)
+})
+```
+### beforeHistoryChange浏览器history触发前
+history就是HTML中的API，如果这个不了解可以百度了解一下，Next.js路由变化默认都是通过history进行的，所以每次都会调用。 不适用history的话，也可以通过hash
+``` js
+Router.events.on('beforeHistoryChange',(...args)=>{
+  console.log('3,beforeHistoryChange->在改变浏览器 history之前触发,参数为:',...args)
+})
+```
+### routeChangeError路由跳转发生错误时
+Router.events.on('routeChangeError',(...args)=>{
+  console.log('4,routeChangeError->跳转发生错误,参数为:',...args)
+})
+需要注意的是404找不到路由页面不算错误，这个我们就不演示了。
+
+### 转变成hash路由模式
+还有两种事件，都是针对hash的，所以现在要转变成hash模式。hash模式下的两个事件hashChangeStart和hashChangeComplete,就都在这里进行编写了。
+``` js
+Router.events.on('hashChangeStart',(...args)=>{
+  console.log('5,hashChangeStart->hash跳转开始时执行,参数为:',...args)
+})
+
+Router.events.on('hashChangeComplete',(...args)=>{
+  console.log('6,hashChangeComplete->hash跳转完成时,参数为:',...args)
+})
+```
+在下面的jsx语法部分，再增加一个链接,使用hash来进行跳转，代码如下：
+``` js
+<div>
+  <Link href="#demo"><a>Demo</a></Link>
+</div>
+```
+我这里给出index.js的全部代码，你可以在练习时进行参考。
+``` js
+import React from 'react';
+import Link from 'next/link'
+import Router from "next/router";
+
+const Home = () => (
+  <>
+    <div>
+      <h2>首页</h2>
+      <div><Link href="/demoA?id=123"><a>demoA页面</a></Link></div>
+      <div>
+        <Link href="/demoB">
+          <a>demoB页面</a>
+        </Link></div>
+      <div>
+        <p onClick={()=> {Router.push('/demoA?id=678')}}>去demoA页面</p>
+      </div>
+      <div>
+        <Link href="#demo"><a>Demo</a></Link>
+      </div>
+    </div>
+  </>
+)
+
+Router.events.on("routeChangeStart", (...args) => {
+  console.log('1.routeChangeStart:'+args);
+});
+
+Router.events.on("routeChangeComplete", (...args) => {
+  console.log('2.routeChangeComplete:'+args);
+});
+
+Router.events.on('beforeHistoryChange',(...args)=>{
+  console.log('3,beforeHistoryChange->在改变浏览器 history之前触发,参数为:',...args)
+});
+
+Router.events.on('routeChangeError',(...args)=>{
+  console.log('4,routeChangeError->跳转发生错误,参数为:',...args)
+});
+
+Router.events.on('hashChangeStart',(...args)=>{
+  console.log('5,hashChangeStart->hash跳转开始时执行,参数为:',...args)
+});
+
+Router.events.on('hashChangeComplete',(...args)=>{
+  console.log('6,hashChangeComplete->hash跳转完成时,参数为:',...args)
+});
+
+export default Home;
+```
+
+## 在getInitialProps中用Axios获取远端数据
+在Next.js框架中提供了getInitialProps静态方法用来获取远端数据，这个是框架的约定，所以你也只能在这个方法里获取远端数据。不要再试图在声明周期里获得，虽然也可以在ComponentDidMount中获得，但是用了别人的框架，就要遵守别人的约定。
+
+### 安装和引入Axios插件
+打开终端，直接使用yarn命令进行安装。
+``` js
+yarn add axios
+```
+我使用的版本是0.19.0,可能你学习的时候会稍有变化。安装完成后，在需要的页面中用import引入axios，代码如下：
+``` js
+import axios from 'axios';
+```
+引入后，就可以使用getInitialProps进行获取后端接口数据了。
+
+### getInitialProps中获取数据
+demoA.js页面中使用getInitialProps，因为是远程获取数据，所以我们采用异步请求的方式。
+``` js
+demoA.gitInitialProps = async () => {
+    const promise = new Promise((resolve) => {
+        axios("http:xxx").then(res => {
+            console.log(res);
+            resolve(res.data.data); // 数据格式为list：{};所有上面用list来显示
+        })
+    })
+    return await promise;
+}
+```
+获得数据后，我们需要把得到的数据传递给页面组件，用{}显示出来就可以了。
+``` js
+import {withRouter} from "next/router";
+import Link from "next/link";
+import axios from "axios";
+
+function demoA({router}) {
+    return (
+        <div>
+            <h2>这是demoA-页面</h2>
+            <p>已接收到参数：{router.query.id}</p>
+            <Link href="/"><a>返回首页</a></Link>
+            <div>远程接收的参数显示： {list}</div>
+        </div>
+    )
+}
+
+demoA.gitInitialProps = async () => {
+    const promise = new Promise((resolve) => {
+        axios("http:xxx").then(res => {
+            console.log(res);
+            resolve(res.data.data); // 数据格式为list：{};所有上面用list来显示
+        })
+    })
+    return await promise;
+}
+
+export default withRouter(demoA);
+```
+::: warning 注意
+在Next.js框架中**只能**用getInitialProps静态方法用来获取远端数据。
+:::
+
+## 使用Style JSX编写页面的CSS样式
+在Next.js中引入一个CSS样式是不可以用的，如果想用，需要作额外的配置。因为框架为我们提供了一个style jsx特性，也就是把CSS用JSX的语法写出来。
+
+### 初识Style JSX语法 把字体设成蓝色
+在pages文件夹下，新建一个demo3.js文件。然后写入下面的代码：
+``` js
+//demo3.js
+function demo3(){
+    return (
+        <>
+            <div>demo3页面</div>
+        </>
+    )
+}
+export default demo3;
+```
+这个是一个最简单的页面，只在层中写了一句话。这时候我们想把页面中字的颜色变成蓝色，就可以使用Style JSX语法。直接在<></>之间写下如下的代码:
+``` js
+<style jsx>
+  {`
+      div{color:blue;}
+  `}
+</style>
+```
+主要所有的css样式需要用{}进行包裹，否则就会报错。这时候你打开浏览器进行预览，字体的颜色就变成了蓝色。
+
+### 自动加随机类名 不会污染全局CSS
+加入了Style jsx代码后，Next.js会自动加入一个随机类名，这样就防止了CSS的全局污染。比如我们把代码写成下面这样，然后在浏览器的控制台中进行查看，你会发现自动给我们加入了类名，类似jsx-xxxxxxxx。
+``` js
+function demo3(){
+    return (
+        <>
+            <div>demo3页面</div>
+            <div className="text">用JSX来渲染css</div>
+           
+            <style jsx>
+                {`
+                    div { color:blue;}
+                    .text {color:red;}
+                `}
+            </style>
+        </>
+    )
+}
+export default demo3;
+```
+### 动态显示样式
+Next.js使用了Style jsx,所以定义动态的CSS样式就非常简单，比如现在要作一个按钮，点击一下，字体颜色就由蓝色变成了红色。下面是实现代码。
+``` js
+import React, {useState} from 'react';
+
+function demo3(){
+    //关键代码----------start-------
+    const [color,setColor] = useState('blue')
+
+    const changeColor = () =>{
+        setColor(color=='blue'?'red':'blue')
+    }
+     //关键代码----------end-------
+    return (
+        <>
+            <div>demo3页面</div>
+            <div><button onClick={changeColor}>改变颜色</button></div>
+            <style jsx>
+                {`
+                    div { color: ${color};}
+                `}
+            </style>
+        </>
+    )
+}
+export default demo3;
+```
+这样就完成了CSS的动态显示，是不是非常容易。
+
+## Lazy Loading实现模块懒加载
+当项目越来越大的时候，模块的加载是需要管理的，如果不管理会出现首次打开过慢，页面长时间没有反应一系列问题。这时候可用Next.js提供的LazyLoading来解决这类问题。让模块和组件只有在用到的时候在进行加载，一般我把这种东西叫做“懒加载”.它一般分为两种情况，一种是懒加载（或者说是异步加载）模块，另一种是异步加载组件。
+
+### 懒加载模块
+这里使用一个在开发中常用的模块Moment.js，它是一个JavaScript日期处理类库，使用前需要先进行安装，这里使用yarn来进行安装。
+``` js
+yarn add momnet
+```
+然后在pages文件夹下，新建立一个time.js文件，并使用刚才的moment库来格式化时间，代码如下:
+``` js
+import React, {useState} from 'react';
+import moment from 'moment'; // 引入moment
+
+function Time(){
+    const [nowTime,setTime] = useState(Date.now());
+    const changeTime=()=>{
+        setTime(moment(Date.now()).format());
+    }
+    return (
+        <>
+            <div>显示时间为:{nowTime}</div>
+            <div><button onClick={changeTime}>改变时间格式</button></div>
+        </>
+    )
+}
+export default Time;
+```
+这个看起来很简单和清晰的案例，缺存在着一个潜在的风险，就是如何有半数以上页面使用了这个momnet的库，那它就会以公共库的形式进行打包发布，**就算项目第一个页面不使用moment也会进行加载，这就是资源浪费**，对于我这样有代码洁癖的良好程序员是绝对不允许的。下面我们就通过Lazy Loading来进行改造代码。
+``` js
+import React, {useState} from 'react';
+//删除import moment
+function Time(){
+    const [nowTime,setTime] = useState(Date.now());
+    const changeTime= async ()=>{ // 把方法变成异步模式
+        const moment = await import('moment'); // 等待moment加载完成
+        setTime(moment.default(Date.now()).format()); // 注意使用defalut
+    }
+    return (
+        <>
+            <div>显示时间为:{nowTime}</div>
+            <div><button onClick={changeTime}>改变时间格式</button></div>
+        </>
+    )
+}
+export default Time;
+```
+这时候就就是懒加载了，可以在浏览器中按F12，看一下Network标签，当我们点击按钮时，才会加载1.js,它就是momnet.js的内容。
+
+### 懒加载自定义组件
+懒加载组件也是非常容易的，我们先来写一个最简单的组件，在components文件夹下建立一个one.js文件，然后编写如下代码：
+``` js
+export default ()=><div>Lazy Loading Component</div>
+```
+有了自定义组件后，先要在懒加载这个组件的文件中引入dynamic,我们这个就在上边新建的time.js文件中编写了。
+``` js
+import dynamic from 'next/dynamic';
+```
+引入后就可以懒加载自定义模块了，代码如下：
+``` js
+import React, {useState} from 'react';
+import dynamic from 'next/dynamic';
+
+const One = dynamic(import('../components/one'));
+
+function Time(){
+    const [nowTime,setTime] = useState(Date.now());
+    const changeTime= async ()=>{
+        const moment = await import('moment');
+        setTime(moment.default(Date.now()).format());
+    }
+    return (
+        <>
+            <div>显示时间为:{nowTime}</div>
+            <One />
+            <div><button onClick={changeTime}>改变时间格式</button></div>
+        </>
+    )
+}
+export default Time;
+```
+写完代码后，可以看到自定义组件是懒加载的，当我们作的应用存在首页打开过慢和某个页面加载过慢时，就可以采用Lazy Loading的形式，用懒加载解决这些问题。
+
+## 自定义Head 更加友好的SEO操作
+既然用了Next.js框架，你就是希望服务端渲染，进行SEO操作。那为了更好的进行SEO优化，可以自己定制Head标签，定义Head一般有两种方式。
+
+### 方法1：在各个页面加上Head标签
+先在/pages文件夹下面建立一个header.js文件，然后写一个最简单的Hooks页面，代码如下:
+``` js
+function Header(){ 
+    return (<div>学习next中Head标签</div>)
+}
+export default Header;
+```
+写完后到浏览器中预览一下（右键-查看网页源代码），可以发现title部分并没有任何内容，显示的是localhost:3000/header,接下来就自定义下Head。自定义需要先进行引入next/head。
+``` js
+import Head from 'next/head';
+```
+引入后你就可以写一些列的头部标签了，全部代码如下:
+``` js
+import Head from 'next/head'
+function Header(){ 
+    return (
+        <>
+            <Head>
+                <title>Head标签</title>
+                <meta charSet='utf-8' />
+            </Head>
+            <div>学习next中Head标签</div>
+    
+        </> 
+    )
+}
+export default Header;
+```
+这时候再打开浏览器预览，你发现已经有了title。
+
+### 方法2：定义全局的Head
+这种方法相当于自定义了一个组件，然后把Head在组件里定义好，以后每个页面都使用这个组件,其实这种方法用处不大，也不灵活。因为Next.js已经把Head封装好了，本身就是一个组件，我们再次封装的意义不大。
+
+比如在components文件夹下面新建立一个myheader.js,然后写入下面的代码:
+``` js
+import Head from 'next/head';
+
+const MyHeader = ()=>{
+    return (
+        <>
+            <Head>
+                <title>Head标签</title>   
+            </Head>
+        </>
+    )
+}
+
+export default MyHeader;
+```
+这时候把刚才编写的header.js页面改写一下，引入自定义的myheader，在页面里进行使用，最后在浏览器中预览，也是可以得到title的。
+``` js
+import Myheader from '../components/myheader'
+function Header(){ 
+    return (
+        <>
+            <Myheader />
+            <div>学习next中Head标签</div>
+        </> 
+    )
+}
+export default Header;
+```
+
+## Next.js框架下使用Ant Design UI
+让Next.js支持CSS文件
+在前面的课程中我讲过Next.js默认是不支持CSS文件的，它用的是style jsx，也就是说它是不支持直接用import进行引入css的。
+
+比如在根目录下新建一个文件夹static（其实正常情况下你应该已经有这个文件了），然后在文件夹下建立一个test.css文件，写入一些CSS Style。
+``` css
+body {
+  color:green;
+}
+```
+然后用import在header.js里引入。
+``` js
+import '../static/test.css';
+```
+写完这些后到浏览器中进行预览，没有任何输出结果而且报错了。这说明Next.js默认是不支持CSS样式引入的，要进行一些必要的设置，才可以完成。
+
+开始进行配置，让Next.js支持CSS文件
+
+先用yarn命令来安装@zeit/next-css包，它的主要功能就是让Next.js可以加载CSS文件，有了这个包才可以进行配置。
+``` js
+yarn add @zeit/next-css
+```
+包安装好以后就可以进行配置文件的编写了，建立一个next.config.js.这个就是Next.js的总配置文件（如果感兴趣可以自学一下）。
+``` js
+const withCss = require('@zeit/next-css')
+
+if(typeof require !== 'undefined'){
+    require.extensions['.css']=file=>{}
+}
+
+module.exports = withCss({})
+```
+这段代码你有兴趣是可以看看的，其实我对配置文件基本不记忆的，因为配置文件就是别人规定的配置，你写就好。比如要使用CSS就可以把上面这段代码输入到放入到里边的就好了。
+
+修改配置文件需要重新启一下服务，重启服务可以让配置生效，这时候你到浏览器中可以发现CSS文件已经生效了，字变成了绿色。
+
+### 按需加载Ant Design
+加载Ant Design在我们打包的时候会把Ant Design的所有包都打包进来，这样就会产生性能问题，让项目加载变的非常慢。这肯定是不行的，现在的目的是只加载项目中用到的模块，这就需要我们用到一个babel-plugin-import文件。
+
+**先来安装Ant Design库**
+
+直接使用yarn来安装就可以。
+``` js
+yarn add antd
+```
+**安装和配置babel-plugin-import插件**
+
+其实babel-plugin-import我讲Vue.js和Webpack.js的时候都一次讲过这个插件，这里我们就再来讲一下，先进行安装。
+``` js
+yarn add babel-plugin-import
+```
+安装完成后，在项目根目录建立.babelrc文件，然后写入如下配置文件。
+``` js
+{
+    "presets":["next/babel"],  //Next.js的总配置文件，相当于继承了它本身的所有配置
+    "plugins":[     //增加新的插件，这个插件就是让antd可以按需引入，包括CSS
+        [
+            "import",
+            {
+                "libraryName":"antd",
+                "style":"css"
+            }
+        ]
+    ]
+}
+```
+这样配置好了以后，webpack就不会默认把整个Ant Design的包都进行打包到生产环境了，而是我们使用那个组件就打包那个组件,同样CSS也是按需打包的。
+
+通过上面的配置，就可以愉快的在Next.js中使用Ant Desgin，让页面变的好看起来。
+
+可以在header.js里，引入Button组件，并进行使用，代码如下。
+``` js
+import Myheader from '../components/myheader';
+import {Button} from 'antd';
+
+
+import '../static/test.css'
+function Header(){ 
+    return (
+        <>
+            <Myheader />
+            <div>Header页面</div>
+            <div><Button>我是按钮</Button></div>
+    
+        </> 
+    )
+}
+export default Header;
+```
+然后到浏览器中查看一下结果，这时候Ant Design已经起作用了，我们也完成了在Next.js中，使用Ant Design的目的。
+
+## Next.js生产环境打包
+其实Next.js大打包时非常简单的，只要一个命令就可以打包成功。但是当你使用了Ant Desgin后，在打包的时候会遇到一些坑。
+``` sh
+打包 ：next build
+运行：next start -p 80
+```
+先把这两个命令配置到package.json文件里，比如配置成下面的样子。
+``` js
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start -p 80"
+},
+```
+然后在终端里运行一下yarn build，如果这时候报错，其实是我们在加入Ant Design的样式时产生的，这个已经在Ant Design的Github上被提出了，但目前还没有被修改，你可以改完全局引入CSS解决问题。
+
+在page目录下，新建一个_app.js文件，然后写入下面的代码。
+``` js
+import App from 'next/app';
+
+import 'antd/dist/antd.css';
+
+export default App;
+```
+同时将.babelrc文件中的引入样式去掉，如：
+``` js
+{
+    "presets":["next/babel"],  //Next.js的总配置文件，相当于继承了它本身的所有配置
+    "plugins":[     //增加新的插件，这个插件就是让antd可以按需引入，包括CSS
+        [
+            "import",
+            {
+                "libraryName":"antd"
+                // "style":"css" // 注释，或者直接删除掉
+            }
+        ]
+    ]
+}
+```
+这样配置一下，就可以打包成功了，然后再运行yarn start来运行服务器，看一下我们的header页面，也是有样式的。说明打包已经成功了。

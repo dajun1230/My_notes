@@ -40,6 +40,7 @@ module.exports = {
               title: 'Vue',
               collapsable: false,
               children: [
+                'unknown', // vue官网中你不知道的
                 'vue2x-1', // vue基础1
                 'vue2x-2',  // vue基础2
                 'install',  // vue2.0 3.0环境搭建
@@ -59,9 +60,11 @@ module.exports = {
               'react',
               'install', // 安装
               'base', // 基础
+              'newreact', // React 16.x版本教程
+              'reactrouter', // React Router 教程及案列
               'rhooks', // React Hooks学习
               'next', // next，基于react的服务端渲染框架
-              'demo', // 案例
+              'demo', // react案例
               'rnative'
             ]
           }
