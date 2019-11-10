@@ -41,6 +41,12 @@
                             <div class="right-icon"></div>
                         </button>
                     </a>
+                    <a href="/webpack/">
+                        <button type="button" class="button" role="button">
+                            Webpack 3.0+
+                            <div class="right-icon"></div>
+                        </button>
+                    </a>
                 </div>
                 <div class="gitContainer"></div>
             </div>
