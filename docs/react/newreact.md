@@ -209,7 +209,7 @@ constructor(props){
 要求把class换成className，它是防止和js中的class类名 冲突，所以要求换掉。
 
 **JSX中的html解析问题**
-如果想在文本框里输入一个<h1>标签，并进行渲染。默认是不会生效的，只会把<h1>标签打印到页面上，这并不是我想要的。如果工作中有这种需求，可以使用dangerouslySetInnerHTML属性解决。具体代码如下：
+如果想在文本框里输入一个h1标签，并进行渲染。默认是不会生效的，只会把h1标签打印到页面上，这并不是我想要的。如果工作中有这种需求，可以使用dangerouslySetInnerHTML属性解决。具体代码如下：
 ``` js
 <ul>
     {

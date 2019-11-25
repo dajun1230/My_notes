@@ -1,6 +1,6 @@
 # 项目搭建
 
-## 构建：create-react-app 快速脚手架
+## create-react-app + dva
 > 基于create-react-app官方脚手架搭建dva模式
 
 creat-react-app优点
@@ -223,7 +223,7 @@ creat-react-app优点
   }
 }
 ```
-此处我本地更改下3000端口为9999，避免与其他本地项目冲突，安装cross-env：
+此处我本地更改下3000端口为9999，避免与其他本地项目冲突，安装cross-env：(此处看需求在配置)
 ```  js
 npm install cross-env
 // 将package.json中的“scripts”的“start”，修改“start”命令为：
@@ -255,7 +255,58 @@ npm install dva --save
 |- yarn.lock
 ``` 
 
-## 构建：generator-react-webpack
+## create-umi
+
+### umi 通过 create-umi 提供脚手架能力，包含：
+``` sh
+● project，通用项目脚手架，支持选择是否启用 TypeScript，以及 umi-plugin-react 包含的功能  
+● ant-design-pro，仅包含 ant-design-pro 布局的脚手架，具体页面可通过 umi block 添加  
+● block，区块脚手架  
+● plugin，插件脚手架  
+● library，依赖（组件）库脚手架，基于 umi-plugin-library
+```
+1. 全局安装umi，并确保版本为2.0以上：
+``` js
+yarn global add umi
+// 或者
+npm install -g umi
+umi -v // 查看版本号，当前版本：2.12.1
+```
+2. 使用create-umi快速搭建脚手架(切记使用cmd命令台创建)
+``` js
+1. mkdir umi_app
+2. yarn create umi // 或者 npm create umi(建议前者，确保安装的是最新脚手架)
+3. 选择app > enter键 > antd > enter键
+```
+3. 通过命令启动项目
+``` js
+yarn start
+```
+4. 目录及约定
+``` sh
+.
+├── dist/                          // 默认的 build 输出目录
+├── mock/                          // mock 文件所在目录，基于 express
+├── config/
+    ├── config.js                  // umi 配置，同 .umirc.js，二选一
+└── src/                           // 源码目录，可选
+    ├── layouts/index.js           // 全局布局
+    ├── pages/                     // 页面目录，里面的文件即路由
+        ├── .umi/                  // dev 临时目录，需添加到 .gitignore
+        ├── .umi-production/       // build 临时目录，会自动删除
+        ├── document.ejs           // HTML 模板
+        ├── 404.js                 // 404 页面
+        ├── page1.js               // 页面 1，任意命名，导出 react 组件
+        ├── page1.test.js          // 用例文件，umi test 会匹配所有 .test.js 和 .e2e.js 结尾的文件
+        └── page2.js               // 页面 2，任意命名
+    ├── global.css                 // 约定的全局样式文件，自动引入，也可以用 global.less
+    ├── global.js                  // 可以在这里加入 polyfill
+    ├── app.js                     // 运行时配置文件
+├── .umirc.js                      // umi 配置，同 config/config.js，二选一
+├── .env                           // 环境变量
+└── package.json
+```
+## generator-react-webpack
 优点介绍：
 ``` sh
 ● 基于webpack构建，可以很容易的配置自己需要的webpack。
