@@ -63,6 +63,7 @@ module.exports = {
               'newreact', // React 16.x版本教程
               'reactrouter', // React Router 教程及案列
               'rhooks', // React Hooks学习
+              'umi', // umijs 学习
               'next', // next，基于react的服务端渲染框架
               'demo', // react案例
               'rnative'

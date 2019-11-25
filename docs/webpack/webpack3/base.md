@@ -167,3 +167,159 @@ cnpm install webpack-dev-server --save-dev
 此时在终端输入命令： webpack-dev-server，成功之后将后续显示的网址输入后在浏览器中打开，发现已完成。
 同时，修改入口文件中的内容，页面上的内容也会更新，完成了热更新。
 
+## CSS分离和publicPath配置
+### CSS分离
+1. css分离需要安装extract-text-webpack-plugin插件
+``` js
+npm install --save-dev extract-text-webpack-plugin
+```
+2. 修改webpack.config.js，引入插件，并使用，代码如下：
+``` js
+const extractTextWebpackPlugin = require('extract-text-webpack-plugin');
+```
+3. 在plugins中进行使用，代码如下：
+``` js
+plugins: [
+  new extractTextWebpackPlugin('/css/index.css')
+]
+```
+4. 将原有处理css的修改如下：
+``` js
+module: {
+  rules: [
+    {
+      test: /\.css$/,
+      use: extractTextWebpackPlugin.extract({ // 新
+        fallback: "style-loader",
+        use: "css-loader"
+      })
+      // use: [{ // 原有
+      //   loader: 'style-loader'
+      // }, {
+      //   loader: 'css-loader'
+      // }]
+    }
+  }
+}
+```
+5. 在终端输入命令：“webpack”进行打包查看
+此时webpack.config.js的完成代码如下：
+``` js
+const path = require('path');
+const htmlPulgin = require('html-webpack-plugin');
+const extractTextWebpackPlugin = require('extract-text-webpack-plugin');
+
+const config = {
+  mode: 'development',
+  entry: {
+    entry: './src/entry.js',
+  },
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: extractTextWebpackPlugin.extract({ // 新
+          fallback: "style-loader",
+          use: "css-loader"
+        })
+      }, {
+        test: /\.(png|jpg|gif)/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 5000
+          }
+        }]
+      }
+    ]
+  },
+  plugins: [
+    new htmlPulgin({
+      minify: { // 压缩
+        removeAttributeQuotes: true // <div id="title"></div>去掉引号后变成<div id=title></div>
+      },
+      hash: true, // 哈希值，防止我们进行缓存，类似与key值
+      template: './src/index.html' // 模板文件
+    }),
+    new extractTextWebpackPlugin('/css/index.css')
+  ],
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    host: '192.168.1.3',
+    compress: true,
+    port: 8082
+  }
+}
+
+module.exports = config;
+```
+### publicPath的使用
+> 将css分离出来之后，会存在引用图片路径问题，当图片的大小小于limit的时候，是不会进行base位转换，而是直接生成图片并引用，然后将css分离成单独文件之后，引用路径就发生了改变，此时就需要配置publicPath。
+
+1. 将图片打包中的limit：50000值改小，确保图片在打包时不会进行base 64位转换。
+2. 在webpack.config.js中书写公共配置,并在output中引用，如下：
+``` js
+const website = {
+  publicPath: "http://192.168.0.111:8080/" // 切记公用路径需要用“/”结尾
+}
+
+module.exports = {
+  output: {
+    path: path.resole(__dirname, 'dist'),
+    filename: '[name].js',
+    publicPath: website.publicPath // 在此处引用
+  }
+}
+```
+此时打包完成的时候，图片都以绝对路径来引用的。
+
+3. 终端输入“webpack”命令进行打包查看。
+
+此时，webpack.config.js的配置文件如下：
+``` js
+
+```
+## 让webpack进行babel转换
+1. 安装依赖包
+``` js
+npm install --save-dev babel-core babel-loader babel-preset-es2015 babel-preset-react
+// babel-loader：用于webpack
+// babel-preset-es2015 用于转换es6的语法
+// babel-preset-react 用于转换react中的jsx语法
+```
+2. 在webpack中进行配置
+``` js
+module: {
+  rules: [
+    {
+      test: /\.(js|jsx)$/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['es2015', 'react']
+        },
+        exclude: /node_modules/ // 去除的文件夹，以免node_modules中的js文件一起进行转换了
+      }
+    }
+  ]
+}
+```
+3. 在根目录下新建.babelrc文件，写入如下代码：
+``` js
+{
+  presets: ['react', 'es2015']
+}
+```
+
+``` js
+npm install --save-dev babel-preset-env
+```
+
+``` js
+{
+  presets: ['react', 'env']
+}
