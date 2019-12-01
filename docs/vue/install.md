@@ -100,7 +100,7 @@ vue init webpack vuecli
 |   |-- assets                       // vue公共资源文件
 |   |-- components                   // vue公共组件
 |   |-- src                          // vue目录文件
-|   |-- store                        // vuex的状态管理（未vuex则无）
+|   |-- store                        // vuex的状态管理（未安装vuex则无）
 |   |-- App.vue                      // 页面入口文件
 |   |-- main.js                      // 程序入口文件，加载各种公共组件
 |-- static                           // 静态文件，比如一些图片，json数据等
@@ -140,37 +140,12 @@ vue create vue-demo // vue-demo为项目名称
 **个人建议采用手动创建，并用cmd命令来创建项目，其中上下键:切换，空格:选择/取消，a:全选/取消全选，i:反选。**
 :::
 
-### 具体步骤
+### 选择安装类型
+> 选择安装类型：默认 或者 手动，建议选择手动安装。
 ``` js
 Please pick a preset: (Use arrow keys)
 > default (babel, eslint) // 包含基本的Babel + ESLint设置的preset。
   Manually select features // 手动选择特性，是我们所需要的面向生产的项目，提供可选功能的 npm 包。
-手动选择特性介绍：
-* Babel // 将ES6编译成ES5
-  TypeScript // JavaScript的一个超集（添加了可选的静态类型和基于类的面向对象编程：类型批注和编译时类型检查、类、接口、模块、lambda 函数）
-  Progressive Web App <PWA> Support // 渐进式Web应用程序
-  Router // vue-router（vue路由）
-  Vuex // vuex（vue的状态管理模式）
-  Css Pre-processors // CSS 预处理器（如：less、sass）
-* Linter / Formatter // 代码风格检查和格式化（如：ESlint）
-  Unit Testing // 单元测试（unit tests）,开发过程中前端对代码进行自运行测试
-  E2E Testing // e2e（end to end） 测试
-
-```
-
-### Manually（手动安装）介绍
-``` sh
-1. 选择
-# 常用选择
-(*) Babel
-( ) TypeScript
-( ) Progressive Web App <PWA> Support
-(*) Router
-(*) Vuex
-(*) Css Pre-processors
-(*) Linter / Formatter
-( ) Unit Testing
-( ) E2E Testing
 ```
 
 ### default（默认安装）介绍
@@ -236,6 +211,66 @@ package.json
 }
 
 ```
+### Manually（手动安装）介绍
+手动选择特性介绍：
+``` js
+* Babel // 将ES6编译成ES5
+  TypeScript // JavaScript的一个超集（添加了可选的静态类型和基于类的面向对象编程：类型批注和编译时类型检查、类、接口、模块、lambda 函数）
+  Progressive Web App <PWA> Support // 渐进式Web应用程序
+  Router // vue-router（vue路由）
+  Vuex // vuex（vue的状态管理模式）
+  Css Pre-processors // CSS 预处理器（如：less、sass）
+* Linter / Formatter // 代码风格检查和格式化（如：ESlint）
+  Unit Testing // 单元测试（unit tests）,开发过程中前端对代码进行自运行测试
+  E2E Testing // e2e（end to end） 测试
+```
+常用选择类型：
+``` sh
+1. 选择
+# 常用选择
+(*) Babel
+( ) TypeScript
+( ) Progressive Web App <PWA> Support
+(*) Router
+(*) Vuex
+(*) Css Pre-processors
+(*) Linter / Formatter
+( ) Unit Testing
+( ) E2E Testing
+```
+### 具体细节介绍
+``` js
+1. /* 使用路由的历史模式：输入 Y */
+Use history mode for router? <Requires proper server setup for index fallback in production> <Y/n>
+// 选择: Y
+2. /* 选择一个CSS预处理器<PostCSS，Autoprefixer和CSS模块默认支持 */
+Pick a CSS pre-processor <PostCSS, Autoprefixer and CSS Modules are supportedby default> <Use arrow keys>
+> Sass/SCSS (with dart-sass)
+  Sass/SCSS (with node-sass)
+  Less
+  Stylus
+// 选择: Sass/SCSS (with node-sass)
+3. /* 选择一个linter/formatter配置 */
+Pick a linter / formatter config: <Use arrow keys>
+> ESLint with error prevention only
+  ESLint + Airbnb config
+  ESLint + Standard config
+  ESLint + Prettier
+// 选择: ESLint + Prettier
+4. /* 反向选择 */
+to invert selection >
+> (*) Lint on save
+  ( ) Lint and fix on commit
+// 选择： Lint on save
+5. /* 您希望在哪里放置Babel、PostCSS、ESLint等的配置。？ */
+Where do you prefer placing config for Babel, PostCSS, ESLint, etc.? <Use arrow keys>
+> In dedicated config files
+  In package.json
+// 选择：In package.json
+6. /* 将此保存为将来项目的预设 */
+Save this as a preset for future projects? (y/N)
+// 选择：N
+```
 ### 配置修改
 在根目录新建一个vue.config.js，加入以下配置：
 ``` js
@@ -257,7 +292,7 @@ module.exports = {
         }
         // subpage: 'src/subpage/main.js' // 当使用只有入口的字符串格式时，模板会被推导为 `public/subpage.html` 并且如果找不到的话，就回退到 `public/index.html`。输出文件名会被推导为 `subpage.html`。
     },
-    lintOnSave: true,
+    lintOnSave: true, // 是否显示eslint语法问题
     devServer: {
         hot: true, // 设置eslint错误得显示为控制台
         clientLogLevel: 'warning',
@@ -285,11 +320,59 @@ module.exports = {
     css: { // css预设器配置项
         extract: true, // 是否使用css分离插件 ExtractTextPlugin
         sourceMap: false, // 开启 CSS source maps
-        loaderOptions: {}, // 给 sass-loader 传递选项
+        loaderOptions: { // 给 sass-loader 传递选项
+          sass: {
+            prependData: `@import "~@/assets/css/variable.scss";`
+          }
+        }, 
         modules: false // 启用 CSS modules for all css / pre-processor files.
     },
     pluginOptions: {} // 第三方插件配置
 }
+```
+### 安装element-ui
+1. 安装
+``` js
+npm i element-ui -S
+```
+2. 按需引入
+借助 babel-plugin-component，我们可以只引入需要的组件，以达到减小项目体积的目的。
+``` js
+npm install babel-plugin-component -D
+```
+3. 在项目下新建 babel.config.js，写入如下代码：
+``` js
+module.exports = {
+  presets: ["@vue/cli-plugin-babel/preset"],
+  plugins: [
+    [
+      "component",
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
+  ]
+};
+```
+4. 新建 variable.scss 文件，里面写入全局变量，然后通过在vue.config.js中引用，如下：
+``` js
+css: {
+  extract: true, // 是否使用css分离插件 ExtractTextPlugin
+  sourceMap: false, // 开启 CSS source maps
+  loaderOptions: { // 给 sass-loader 传递选项
+    sass: {
+      prependData: `@import "~@/assets/css/variable.scss";`
+    }
+  }, 
+  modules: false // 启用 CSS modules for all css / pre-processor files.
+}
+```
+variable.scss中设置变量，同时引入element-ui的样式，并在main.js中进行引用
+``` scss
+// 全局变量文件
+$theme-color: #44C9A8; // 主题色
+@import './element-ui.scss';
 ```
 ## 拉取 2.x 模板 (旧版本)
 ue CLI >= 3 和旧版使用了相同的 vue 命令，所以 Vue CLI 2 (vue-cli) 被覆盖了。如果你仍然需要使用旧版本的 vue init 功能，你可以全局安装一个桥接工具：

@@ -1,6 +1,6 @@
 # 项目搭建
 
-## create-react-app + dva
+## create-react-app
 > 基于create-react-app官方脚手架搭建dva模式
 
 creat-react-app优点
@@ -24,6 +24,9 @@ creat-react-app优点
 ``` js
 |- node_modules
 |- public
+    |- favicon.ico
+    |- index.html
+    |- manifest.json
 |- src
     |- App.css
     |- App.js
@@ -76,7 +79,8 @@ creat-react-app优点
 此时，可以通过**npm start**将项目运行起来，默认端口为3000
 
 4. 增加配置
-> 注意scripts执行命令中有一个eject，意为弹射暴露出所有配置，其实脚手架还是为我们封装了一些东西的，这里我们就暴露出所有配置吧。<br/>
+> 注意scripts执行命令中有一个eject，意为弹射暴露出所有配置，其实脚手架还是为我们封装了一些东西的，这里我们就暴露出所有配置吧。
+
 运行 **npm run eject** ，一旦选择eject，那么所封装的组件依赖和项目结构会有所变化，此时的项目结构如图：
 ```  js
 |- config // 新增
@@ -230,12 +234,83 @@ npm install cross-env
 - "start": "node scripts/start.js", // 旧
 + "start": "cross-env PORT=9999 node scripts/start.js", // 新
 ```
-5. 安装Dva库
+5. 安装less及配置
+> 当前react版本为16.11.0.
+
+安装less：
+``` js
+npm install less less-loader -D // 或者 yarn add less less-loader -D
+```
+在webpack.config.js文件中进行配置：
+``` js
+/* 1.找到“// style files regexes”下先引入 */
+const lessRegex = /\.less$/;
+const lessModuleRegex = /\.module\.less$/;
+/* 2.找到sass的配置项，仿照写入less的配置 */ 
+{
+  test: sassRegex,
+  exclude: sassModuleRegex,
+  use: getStyleLoaders(
+    {
+      importLoaders: 2,
+      sourceMap: isEnvProduction && shouldUseSourceMap,
+    },
+    'sass-loader'
+  ),
+  // Don't consider CSS imports dead code even if the
+  // containing package claims to have no side effects.
+  // Remove this when webpack adds a warning or an error for this.
+  // See https://github.com/webpack/webpack/issues/6571
+  sideEffects: true,
+},
+{ // 此处为新增项
+  test: lessRegex,
+  exclude: sassModuleRegex,
+  use: getStyleLoaders(
+    {
+      importLoaders: 2,
+      sourceMap: isEnvProduction && shouldUseSourceMap,
+    },
+    'less-loader'
+  ),
+  sideEffects: true,
+},
+// Adds support for CSS Modules, but using SASS
+// using the extension .module.scss or .module.sass
+{
+  test: sassModuleRegex,
+  use: getStyleLoaders(
+    {
+      importLoaders: 2,
+      sourceMap: isEnvProduction && shouldUseSourceMap,
+      modules: true,
+      getLocalIdent: getCSSModuleLocalIdent,
+    },
+    'sass-loader'
+  ),
+},
+{ // 此处为新增项
+  test: lessModuleRegex,
+  use: getStyleLoaders(
+    {
+      importLoaders: 2,
+      sourceMap: isEnvProduction && shouldUseSourceMap,
+      modules: true,
+      getLocalIdent: getCSSModuleLocalIdent,
+    },
+    'less-loader'
+  ),
+},
+```
+## create-create-app + dva
+> 通过上述所有操作步骤完成基本搭建，然后采用dva的数据流。
+
+1. 安装Dva库
 > dva也有自己的脚手架dva-cli，也可快速构建项目，目前已升至2.x版本，采用react-router@4.x路由版本。
 ```  
 npm install dva --save
 ```
-6. 项目改造为dva模式
+2. 项目改造为dva模式
 ``` js
 |- config
 |- node_modules
@@ -273,39 +348,21 @@ npm install -g umi
 umi -v // 查看版本号，当前版本：2.12.1
 ```
 2. 使用create-umi快速搭建脚手架(切记使用cmd命令台创建)
+> 此处可以通过在任何目录下打开终端，输入命令 umi ui，进行可视化项目搭建。
 ``` js
 1. mkdir umi_app
 2. yarn create umi // 或者 npm create umi(建议前者，确保安装的是最新脚手架)
 3. 选择app > enter键 > antd > enter键
 ```
-3. 通过命令启动项目
+3. 安装依赖包
+``` js
+yarn // 或者 npm install
+```
+4. 启动项目
 ``` js
 yarn start
 ```
-4. 目录及约定
-``` sh
-.
-├── dist/                          // 默认的 build 输出目录
-├── mock/                          // mock 文件所在目录，基于 express
-├── config/
-    ├── config.js                  // umi 配置，同 .umirc.js，二选一
-└── src/                           // 源码目录，可选
-    ├── layouts/index.js           // 全局布局
-    ├── pages/                     // 页面目录，里面的文件即路由
-        ├── .umi/                  // dev 临时目录，需添加到 .gitignore
-        ├── .umi-production/       // build 临时目录，会自动删除
-        ├── document.ejs           // HTML 模板
-        ├── 404.js                 // 404 页面
-        ├── page1.js               // 页面 1，任意命名，导出 react 组件
-        ├── page1.test.js          // 用例文件，umi test 会匹配所有 .test.js 和 .e2e.js 结尾的文件
-        └── page2.js               // 页面 2，任意命名
-    ├── global.css                 // 约定的全局样式文件，自动引入，也可以用 global.less
-    ├── global.js                  // 可以在这里加入 polyfill
-    ├── app.js                     // 运行时配置文件
-├── .umirc.js                      // umi 配置，同 config/config.js，二选一
-├── .env                           // 环境变量
-└── package.json
-```
+
 ## generator-react-webpack
 优点介绍：
 ``` sh

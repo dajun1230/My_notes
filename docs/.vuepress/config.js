@@ -57,11 +57,12 @@ module.exports = {
             title: 'React',
             collapsable: false,
             children: [
-              'react',
+              'react', // React基础
               'install', // 安装
               'base', // 基础
               'newreact', // React 16.x版本教程
               'reactrouter', // React Router 教程及案列
+              'redux', // Redux学习
               'rhooks', // React Hooks学习
               'umi', // umijs 学习
               'next', // next，基于react的服务端渲染框架
