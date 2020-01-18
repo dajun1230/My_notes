@@ -20,12 +20,71 @@ $ git config --global user.email johndoe@example.com
 
 Git代码托管平台：国外平台（Github、Gitlab、BitBucket）、国内平台（Gitee<码云>、Coding<码市>、开源中国等）
 
-当我们参与的项目相对较多时，可能需要一台电脑与多个代码托管平台进行**关联**，然而具体操作步骤如下：(基于git 的代码托管平台，一般都支持https和ssh两种身份验证方式，使用https方式比较灵活，随看随下，但是，当我们正式开始项目时候，配置一个ssh还是比较方便的，这样每次克隆、拉取、推送都不用输入用户名和密码了。)
+## 多网站配置公钥
+
+当我们参与的项目相对较多时，可能需要一台电脑与多个代码托管平台进行**关联**，然而具体操作步骤如下：(基于git 的代码托管平台，一般都支持https和ssh两种身份验证方式，使用**https方式**比较灵活，随看随下，但是每次提交代码都需要验证账户和密码，并且在推送代码过程中不能推送大型文件；而**ssh**相比较而言，省去每次推送代码验证账户和密码的步骤，并且支持推送大型文件。)
+
+### 第一种方法(常用)
+1. 生成公钥
+任何目录下输入下行命令 ，然后 回车，一直回车到结束命令。
+``` js
+ssh-keygen -t rsa -C xxxxx@qq.com // （xxxxx@qq.com是账号邮箱地址）
+```
+2. 将服务器与地址建立关联
+在 .ssh 目录下生成 config 文件（命令窗口输入命令：touch config），并在config 文件下编写如下代码：(目录：C:\Users\Administrator\.ssh)
+``` js
+Host github.com // Host 跟地址
+User dajun // User 用户名，可随便输入
+PreferredAuthentications publickey // 固定行
+IdentityFile ~/.ssh/id_rsa_github // github 要与上面在ssh-keygen的时候输入的名字相对应
+```
+3. 进入网址配置公钥，将.ssh下的id_rsa_gitee.pub复制到对应网站上，建立连接
+4. 克隆，拉取代码
+### 注意事项
+当我们在配置Host地址的时候，有可能出现地址不匹配的情况，比如：配置coding，地址就不是网上说的"git.coding.net"，此时我们可以采取以下的方式或者地址:
+
+1. 终端直接拉取代码
+``` js
+git clone git@git.dev.tencent.com:Diligence_yang/vue-demo.git // 后面跟的是一串库的地址
+```
+2. 从以下图中获取到地址为：git.dev.tencent.com
+
+![An image](./images/git_error.png)
+
+3. 进行配置
+
+**常用配置**：
+``` js
+Host gitee.com // 码云
+User dajun
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa_gitee
+
+Host github.com // Github
+User dajun
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa_github
+
+Host git.dev.tencent.com // Coding
+User dajun
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa_conding
+
+Host 119.3.143.198 // 公司代码库
+User dajun
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_rsa_bucket
+```
+### 代码回退
+
+![An image](./images/git_reset.png)
+
+### 第二种方法
 ``` js
 步骤：
 1. 生成公钥
 任何目录下输入 ssh-keygen ，回车，然后输入地址加 “文件名”，如“/c/Users/Administrator/.ssh/id_rsa_github”，回车(两次)；
-生成的 .ssh 文件下，打开公钥文件，修改最后信息为自己邮箱地址,打开网址，将公钥粘贴到指定位置。
+生成的 .ssh 文件下，打开公钥文件，修改最后信息为自己邮箱地址,打开网址，将公钥粘贴到指定位置。(切记要修改为自己的邮箱)
 2. 将服务器与地址建立关联
 在 .ssh 目录下生成 config 文件（命令窗口输入命令：touch config），并在config 文件下编写如下代码：
 Host github.com

@@ -100,7 +100,8 @@ module.exports = {
             'git', // git
             'es6', // ES6
             'dva', // dva开发
-            'wepy' // wepy 小程序开发
+            'wepy', // wepy 小程序开发
+            'js', // JS 基础
           ]
         }],
         '/typescript/': [{
