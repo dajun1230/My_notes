@@ -245,7 +245,7 @@ props与state的区别
 </body>
 </html>
 ```
-这里需要注意，this.props.children的值有三种可能，如果当前组件没有子节点，他就是undfined；如果有一个子节点，数据类型是object；如果有多个子节点，数据类型就是array。所以处理this.proprs.children的时候要小心。
+这里需要注意，this.props.children的值有三种可能，如果当前组件没有子节点，他就是undefined；如果有一个子节点，数据类型是object；如果有多个子节点，数据类型就是array。所以处理this.proprs.children的时候要小心。
 
 ## React组件：props属性验证
 

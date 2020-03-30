@@ -1,14 +1,15 @@
 # 环境搭建
+[[toc]]
 
 ## 认识一下Flutter
 
 **主流框架对比**
 
-**Cordova：**个人认为Flutter可以完胜了，因为Cordova还是基于网页技术进行包装，利用插件的形式开发移动应用的，就这一点。无论是性能还是体验，Flutter都可以完胜了。
+**Cordova：** 个人认为Flutter可以完胜了，因为Cordova还是基于网页技术进行包装，利用插件的形式开发移动应用的，就这一点。无论是性能还是体验，Flutter都可以完胜了。
 
-**RN（React Native）：**RN的效率由于是将View编译成了原生View,所以效率上要比基于Cordova的HTML5高很多,但是它也有效率问题,RN的渲染机制是基于前端框架的考虑,复杂的UI渲染是需要依赖多个view叠加.比如我们渲染一个复杂的ListView,每一个小的控件,都是一个native的view,然后相互组合叠加.想想此时如果我们的list再需要滑动刷新,会有多少个对象需要渲染.所以也就有了前面所说的RN的列表方案不友好。
+**RN(React Native)：** RN的效率由于是将View编译成了原生View,所以效率上要比基于Cordova的HTML5高很多,但是它也有效率问题,RN的渲染机制是基于前端框架的考虑,复杂的UI渲染是需要依赖多个view叠加.比如我们渲染一个复杂的ListView,每一个小的控件,都是一个native的view,然后相互组合叠加.想想此时如果我们的list再需要滑动刷新,会有多少个对象需要渲染.所以也就有了前面所说的RN的列表方案不友好。
 
-**Flutter：**吸收了前两者的教训之后,在渲染技术上,选择了自己实现(GDI),由于有更好的可控性,使用了新的语言Dart,避免了RN的那种通过桥接器与Javascript通讯导致效率低下的问题,所以在性能方面比RN更高一筹;有经验的开发者可以打开Android手机开发者选项里面的显示边界布局,发现Flutter的布局是一个整体.说明Flutter的渲染没用使用原生控件进行渲染。
+**Flutter：** 吸收了前两者的教训之后,在渲染技术上,选择了自己实现(GDI),由于有更好的可控性,使用了新的语言Dart,避免了RN的那种通过桥接器与Javascript通讯导致效率低下的问题,所以在性能方面比RN更高一筹;有经验的开发者可以打开Android手机开发者选项里面的显示边界布局,发现Flutter的布局是一个整体.说明Flutter的渲染没用使用原生控件进行渲染。
 
 **120fps超高性能**
 
@@ -22,7 +23,7 @@ Flutter编写的应用是可以达到120fps(每秒传输帧数),这也就是说�
 
 [github地址](https://github.com/Solido/awesome-flutter)
 
-## Flutter开发环境搭建Windows版
+## 开发环境搭建Windows版
 ::: danger 警告
 特别说明:如果你还不会翻墙，科学上网。那你先停止学习吧，因为你不可能安装成功，先去学学这些东西，能打开谷歌了，再返回来学效率更高。
 :::
@@ -112,7 +113,7 @@ flutter doctor --android-licenses
 
 ![An image](./images/Flutter_error.png)
 
-## Flutter开发环境搭建Mac版
+## 开发环境搭建Mac版
 **系统环境要求**
 
 Flutter因为是新出的框架，所以对系统还是有一定的要求的。
@@ -121,19 +122,19 @@ Flutter因为是新出的框架，所以对系统还是有一定的要求的。
 ● 磁盘空间：大于700M，如果算上Android Studio等编辑工具，尽量大于3G。
 ● 命令号工具：bash、mkdir、rm、git、curl、unzip、which、brew 这些命令在都可以使用。
 ```
-注意：一般你会在brew这个命令下载坑，很多mac系统都没有安装这个，你可以进行安装，因为这个和本知识关系性不大，所以我就不写流程了，如果你出现问题，直接点击链接学习安装就可以了。
+注意：一般你会在brew这个命令下载，很多mac系统都没有安装这个，你可以进行安装，因为这个和本知识关系性不大，所以我就不写流程了，如果你出现问题，直接点击链接学习安装就可以了。
 
 学习安装brew：https://segmentfault.com/a/1190000013317511
 
 ### 下载Flutter SDK包
 
-网址：https://flutter.io/setup-macos/
+[网址](https://flutter.io/setup-macos/)
 
 进入网址后，向下拖拽一下，然后看到图片中的内容，点击红框处就可以下载了。
 
 如果你这也感觉麻烦，那可以直接点击下面的链接：
 
-点击直接下载：https://storage.googleapis.com/flutter_infra/releases/beta/macos/flutter_macos_v0.9.4-beta.zip
+[点击直接下载flutter_macos_v0.9.4-beta.zip](https://storage.googleapis.com/flutter_infra/releases/beta/macos/flutter_macos_v0.9.4-beta.zip)
 
 这个会随着版本的升级，而失效，所以不建议使用。
 
@@ -144,21 +145,28 @@ Flutter因为是新出的框架，所以对系统还是有一定的要求的。
 ``` js
 vim ~/.bash_profile
 ```
-在打开的文件里增加一行代码，意思是配置flutter命令在任何地方都可以使用。
-``` js
-export PATH=/app/flutter/bin:$PATH
+``` warning
+注意：
+字母O：只读，字母E：需改，字母Q：退出，
+按e进入编辑，先输入字母i才能编辑，编辑完之后先按esc退出，然后输入:wq(保存并退出)，:q是直接退出。
 ```
-提示：这行命令你要根据你把压缩包解压的位置来进行编写，写的是你的路径，很有可能不跟文章一样。
+在打开的文件里增加一行代码，意思是配置flutter命令在任何地方都可以使用（把文件夹按住左键拖入到终端可以获取路径）。
+``` js
+export PATH=/Users/xiaoyang/Documents/flutter/bin:$PATH
+```
+提示：这行命令你要根据你把压缩包解压的位置来进行编写，写的是你的路径，很有可能不跟文章一样（目前flutter文件放在用户的文稿当中）。
 
-配置完成后，需要用source命令重新加载一下 ，具体命令如下：
+配置完成后，需要用source命令重新加载一下 ，具体命令如下（作用：重启终端）：
 ``` js
 source ~/.bash_profile
 ```
 完成这部以后，就算我们flutter的安装工作完成了，但是这还不能进行开发。可以使用命令来检测一下，是否安装完成了。
 ``` js
-flutter -h
+flutter doctor
 ```
-出现下面的结果，说明到目前为止，我们安装一切顺利。
+出现下面的结果，说明到目前为止，我们安装一切顺利(或者输入 flutter -h来检查安装都行)。
+
+![An image](./images/flutter_mac.png)
 
 ### 检查开发环境
 到上边为止，我们安装好了Flutter，但是还不具备开发环境。开发还需要很多软件和插件的支持，那到底需要哪些插件和软件那？我们可以使用Flutter为我们提供的命令来进行检查：
@@ -170,7 +178,7 @@ flutter doctor
 
 有可能你的Android studio也没有安装，那么你要先安装这个编辑器，安装好后，可以顺便下载Android SDK。
 
-Android Studio下载地址：http://www.android-studio.org/
+[Android Studio下载地址](http://www.android-studio.org/)
 
 打开后选择对应的Mac版本，如下图（随着网站的改版，可能略有不同）
 
@@ -242,6 +250,24 @@ source ~/.bash_profile
 ```
 希望大家都能安装成功，这只是我的安装过程，不敢保证全部正确，但是我尽量详细的描述了我Mac的搭建过程，希望可以帮助到Flutter的爱好者。
 
+附件： (MAC环境配置)
+``` js
+// flutter文件所在位置
+export PATH=/Users/xiaoyang/Documents/flutter/bin:$PATH
+// flutter中Android的sdk所在位置及其工具配置
+export ANDROID_HOME="/Users/xiaoyang/Library/Android/sdk"
+export PATH=${PATH}:${ANDROID_HOME}/tools
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+//fluter国内镜像
+export PUB_HOSTED_URL=https://pub.flutter-io.cn
+export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+// Android studio的sdk所在位置及其工具配置
+export ANDROID_HOMES=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOMES/emulator
+export PATH=$PATH:$ANDROID_HOMES/tools
+export PATH=$PATH:$ANDROID_HOMES/tools/bin
+export PATH=$PATH:$ANDROID_HOMES/platform-tools
+```
 ## 安装AVD虚拟机 Flutter跑起来
 **Android studio新建Flutter项目**
 

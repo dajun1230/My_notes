@@ -67,7 +67,8 @@ module.exports = {
               'umi', // umijs 学习
               'next', // next，基于react的服务端渲染框架
               'demo', // react案例
-              'rnative'
+              'rnative',
+              'taro' // react多端开发（移动端/小程序等等）
             ]
           }
         ],

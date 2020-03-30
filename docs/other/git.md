@@ -28,7 +28,10 @@ Git代码托管平台：国外平台（Github、Gitlab、BitBucket）、国内�
 1. 生成公钥
 任何目录下输入下行命令 ，然后 回车，一直回车到结束命令。
 ``` js
-ssh-keygen -t rsa -C xxxxx@qq.com // （xxxxx@qq.com是账号邮箱地址）
+ssh-keygen -t rsa -C xxxxx@qq.com -f ～/.ssh/xxx //（mac和window都能用）
+// xxxxx@qq.com 比如git地址账号邮箱
+// xxx 为本地文件名(~/.ssh即ssh目录下)
+// ssh-keygen -t rsa -C xxxxx@qq.com 会默认生成一个文件，上述命令可生成多个文件
 ```
 2. 将服务器与地址建立关联
 在 .ssh 目录下生成 config 文件（命令窗口输入命令：touch config），并在config 文件下编写如下代码：(目录：C:\Users\Administrator\.ssh)
@@ -136,9 +139,27 @@ git diff HEAD // 查看工作树与最新提交的差别
 ## 分支操作
 ``` js
 git branch // 显示分支一览表，同时确认当前所在的分支
-git checkout -b aaa // 创建名为aaa的分支，并且切换到aaa分支
 git branch aaa // 创建名为aaa的分支
+git branch -b bbb // 切换分支，切换到bbb分支
+git checkout -b aaa // 创建名为aaa的分支，并且切换到aaa分支
 git checkout aaa // 切换到aaa分支，能和git branch -b aaa 得到同样的效果
+git checkout -b bbb origin/bbb // 新建分支bbb，同时与远程的bbb分支建立关联，然后再运行命令git push则会直接拉取远程的bbb分支的代码到本地的bbb分支(建议本地分支与远程分支同名)（好像可以胜率origin，但是没有尝试过）
+git checkout --track origin/bbb // 会在本地新建一个分支，然后自动跟踪远程的同名分支bbb（未尝试）
 git checkout - // 切换到上一分支
+git push --set-upstream origin bbb // 在远程创建一个与本地bbb同名的分支并跟踪（未尝试）
 git log --graph // 以图表形式查看分支
+git merge dev // 将dev分支合并到当前分支
+git checkout -d dev // 删除dev分支
+git switch -c dev // 创建并切换到新的dev分支
+git switch master // 切换到已有的master分支
+```
+
+## 临时工作
+``` js
+git stash // 把当前工作现场“储藏”起来，等以后恢复现场后继续工作
+git stash list // 查看当前缓存的工作
+git stash apply // 恢复当前工作现场，但stash内容并没有删除
+git stash drop // 删除stash内容
+git stash pop // 恢复当前工作，同时删除stash内容
+git cherry-pick <commit> // 在master分支上修复的bug，想要合并到当前dev分支，可以用git cherry-pick <commit>命令，把bug提交的修改“复制”到当前分支，避免重复劳动。
 ```
