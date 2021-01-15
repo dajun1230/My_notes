@@ -12,6 +12,7 @@
 </template>
 
 <script>
+// 测试
 import { BIND_MAC } from "@/config/api";
 import CartItem from "@/components/CartItem"; // 引用CartItem组件
 
